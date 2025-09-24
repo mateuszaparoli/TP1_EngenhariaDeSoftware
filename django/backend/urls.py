@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from library.views import ArticleListCreateAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/articles/', ArticleListCreateAPIView.as_view(), name='article-list-create'),
 ]
