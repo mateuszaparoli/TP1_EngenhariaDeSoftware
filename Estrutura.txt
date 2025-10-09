@@ -1,0 +1,48 @@
+Pergunta: O que esse arquivo mmodels.py representa no meu app?
+
+Resposta GitHub Copilot
+
+É o módulo que define os modelos (entidades) do app "library" — cada classe vira uma tabela no banco e o Django ORM mapeia campos e relações.
+
+Resumo dos modelos presentes
+
+Event
+Campos: name (Char), description (Text).
+Representa um evento (ex.: conferência).
+Edition
+Campos: event (FK → Event), year (int), location, start_date, end_date.
+Relação: várias edições por evento (related_name='editions').
+on_delete=models.CASCADE: apagar evento apaga suas edições.
+Author
+Campos: name, email.
+Representa autores dos artigos.
+Article
+Campos: title, abstract, pdf_url, edition (FK → Edition), authors (ManyToMany → Author), bibtex, created_at (auto_now_add).
+Relação: cada artigo pertence a uma edição; vários autores por artigo (M2M). related_name='articles' permite acesso reverso.
+O que isso implica / como usar
+
+
+//////////////////////////////////////////
+
+
+Pergunta: e essa pasta management pra que serve?
+
+GitHub Copilot
+
+A pasta management/commands contém "management commands" do Django — comandos customizados que você pode rodar com manage.py. Cada arquivo .py dentro de management/commands vira um comando disponível via python manage.py <nome_do_arquivo>.
+
+O que acontece aqui
+
+Estrutura esperada:
+library/management/commands/<comando>.py
+Cada arquivo define uma classe Command(BaseCommand) com add_arguments() e handle().
+O nome do comando é o nome do arquivo: manage_event.py → comando manage_event.
+Django carrega esses comandos automaticamente quando você usa manage.py.
+Como usar o comando manage_event que você mostrou
+
+/////////////////////////////////////////
+
+
+Para chamar programaticamente dentro do código Python, use:
+from django.core.management import call_command
+call_command('manage_event', 'Nome', 2025, location='Local')
