@@ -1,0 +1,4 @@
+Mateus:
+ 1- Melhor fluxo até aqui:
+	- GPT-5 mini no copilot pra passar pelos arquivos e ir criando os códigos
+	- Sonnet 4.5 no modo chat do app Claude para tirar dúvidas sobre funções, Django etc.
