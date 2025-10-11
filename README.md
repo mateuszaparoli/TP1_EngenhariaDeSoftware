@@ -5,12 +5,12 @@
 
 ## Equipe  
   
-| Nome    | Papel                 |  
-| :------ | :-------------------- |  
-| Bruno Buti Ferreira Guilherme   | Desenvolvedor Backend |  
-| João Vitor Vieira Neves    | Desenvolvedor FullStack |  
-| Mateus Faria Zaparoli Monteiro  | Desenvolvedor Frontend |
-| Ricardo Shen | Desenvolvedor FullStack |
+| Nome                            | Papel                   | 
+| :------------------------------ | :---------------------- | 
+| Bruno Buti Ferreira Guilherme   | Desenvolvedor Backend   |  
+| João Vitor Vieira Neves         | Desenvolvedor FullStack |  
+| Mateus Faria Zaparoli Monteiro  | Desenvolvedor Frontend  |
+| Ricardo Shen                    | Desenvolvedor FullStack |
   
 ---  
   
@@ -19,7 +19,7 @@
 ### 💻 Back-end  
 * **Linguagem:** Python  
 * **Framework:** Django  
-* **Banco de Dados:** MySQL  
+* **Banco de Dados:** MySQL     
   
 ### 🌐 Front-end  
 * **Linguagem:** JavaScript  
