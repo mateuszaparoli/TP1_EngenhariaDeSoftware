@@ -16,9 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from library.views import ArticleListCreateAPIView
+from library.views import (
+    ArticleListCreateAPIView,
+    EditionListCreateView,
+    EditionDetailView,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/articles/', ArticleListCreateAPIView.as_view(), name='article-list-create'),
+    path('api/editions/', EditionListCreateView.as_view(), name='edition-list-create'),
+    path('api/editions/<int:pk>/', EditionDetailView.as_view(), name='edition-detail'),
 ]

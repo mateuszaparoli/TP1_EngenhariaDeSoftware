@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, Calendar } from "lucide-react";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -22,338 +20,214 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getEvents, createEvent, updateEvent, deleteEvent, EventItem } from "../../lib/api";
+import { Plus, Edit, Trash2 } from "lucide-react";
 
-interface Event {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  editions: EventEdition[];
-}
+export default function EventsManager(): React.JSX.Element {
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-interface EventEdition {
-  id: string;
-  eventId: string;
-  year: number;
-  location: string;
-  date: string;
-}
+  const [editing, setEditing] = useState<EventItem | null>(null);
+  const [form, setForm] = useState<EventItem>({ name: "", sigla: "", promoter: "", description: "" });
 
-const EventsManager = () => {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
-  const [isEditionDialogOpen, setIsEditionDialogOpen] = useState(false);
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [editingEdition, setEditingEdition] = useState<EventEdition | null>(null);
-  const [selectedEventId, setSelectedEventId] = useState<string>("");
-
-  const [eventForm, setEventForm] = useState({
-    name: "",
-    description: "",
-    category: "",
-  });
-
-  const [editionForm, setEditionForm] = useState({
-    year: new Date().getFullYear(),
-    location: "",
-    date: "",
-  });
+  async function load() {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getEvents();
+      setEvents(data);
+    } catch (e: any) {
+      setError(e.message || "Erro");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    const storedEvents = localStorage.getItem("events");
-    if (storedEvents) {
-      setEvents(JSON.parse(storedEvents));
-    }
+    load();
   }, []);
 
-  const saveEvents = (updatedEvents: Event[]) => {
-    setEvents(updatedEvents);
-    localStorage.setItem("events", JSON.stringify(updatedEvents));
-  };
+  function startCreate() {
+    setEditing(null);
+    setForm({ name: "", sigla: "", promoter: "", description: "" });
+  }
 
-  const handleSaveEvent = () => {
-    if (editingEvent) {
-      const updatedEvents = events.map((e) =>
-        e.id === editingEvent.id ? { ...editingEvent, ...eventForm } : e
-      );
-      saveEvents(updatedEvents);
-      toast.success("Event updated successfully");
-    } else {
-      const newEvent: Event = {
-        id: Date.now().toString(),
-        ...eventForm,
-        editions: [],
-      };
-      saveEvents([...events, newEvent]);
-      toast.success("Event created successfully");
+  function startEdit(ev: EventItem) {
+    setEditing(ev);
+    setForm({ ...ev });
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    try {
+      if (editing && editing.id) {
+        await updateEvent(editing.id, form);
+      } else {
+        await createEvent(form);
+      }
+      await load();
+      startCreate();
+    } catch (err: any) {
+      setError(err.message || "Erro ao salvar");
     }
-    setIsEventDialogOpen(false);
-    resetEventForm();
-  };
+  }
 
-  const handleDeleteEvent = (id: string) => {
-    const updatedEvents = events.filter((e) => e.id !== id);
-    saveEvents(updatedEvents);
-    toast.success("Event deleted successfully");
-  };
-
-  const handleSaveEdition = () => {
-    const event = events.find((e) => e.id === selectedEventId);
-    if (!event) return;
-
-    let updatedEditions;
-    if (editingEdition) {
-      updatedEditions = event.editions.map((ed) =>
-        ed.id === editingEdition.id ? { ...editingEdition, ...editionForm } : ed
-      );
-      toast.success("Edition updated successfully");
-    } else {
-      const newEdition: EventEdition = {
-        id: Date.now().toString(),
-        eventId: selectedEventId,
-        ...editionForm,
-      };
-      updatedEditions = [...event.editions, newEdition];
-      toast.success("Edition created successfully");
+  async function onDelete(id?: number) {
+    if (!id) return;
+    if (!confirm("Confirma exclusão?")) return;
+    try {
+      await deleteEvent(id);
+      await load();
+    } catch (err: any) {
+      setError(err.message || "Erro ao deletar");
     }
-
-    const updatedEvents = events.map((e) =>
-      e.id === selectedEventId ? { ...e, editions: updatedEditions } : e
-    );
-    saveEvents(updatedEvents);
-    setIsEditionDialogOpen(false);
-    resetEditionForm();
-  };
-
-  const handleDeleteEdition = (eventId: string, editionId: string) => {
-    const updatedEvents = events.map((e) =>
-      e.id === eventId
-        ? { ...e, editions: e.editions.filter((ed) => ed.id !== editionId) }
-        : e
-    );
-    saveEvents(updatedEvents);
-    toast.success("Edition deleted successfully");
-  };
-
-  const openEventDialog = (event?: Event) => {
-    if (event) {
-      setEditingEvent(event);
-      setEventForm({
-        name: event.name,
-        description: event.description,
-        category: event.category,
-      });
-    }
-    setIsEventDialogOpen(true);
-  };
-
-  const openEditionDialog = (eventId: string, edition?: EventEdition) => {
-    setSelectedEventId(eventId);
-    if (edition) {
-      setEditingEdition(edition);
-      setEditionForm({
-        year: edition.year,
-        location: edition.location,
-        date: edition.date,
-      });
-    }
-    setIsEditionDialogOpen(true);
-  };
-
-  const resetEventForm = () => {
-    setEditingEvent(null);
-    setEventForm({ name: "", description: "", category: "" });
-  };
-
-  const resetEditionForm = () => {
-    setEditingEdition(null);
-    setEditionForm({ year: new Date().getFullYear(), location: "", date: "" });
-  };
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-foreground">Events Management</h2>
-          <p className="text-muted-foreground">Manage events and their editions</p>
+          <h2 className="text-2xl font-bold text-foreground">Eventos</h2>
+          <p className="text-muted-foreground">Gerencie os eventos cadastrados</p>
         </div>
-        <Button onClick={() => openEventDialog()}>
+        <Button onClick={startCreate}>
           <Plus className="w-4 h-4 mr-2" />
-          Add Event
+          Novo Evento
         </Button>
       </div>
 
-      {events.map((event) => (
-        <Card key={event.id}>
-          <CardHeader>
-            <div className="flex justify-between items-start">
-              <div>
-                <CardTitle>{event.name}</CardTitle>
-                <CardDescription>{event.category}</CardDescription>
-                <p className="text-sm text-muted-foreground mt-2">{event.description}</p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => openEventDialog(event)}>
-                  <Edit className="w-4 h-4" />
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => handleDeleteEvent(event.id)}>
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold">Editions</h3>
-              <Button variant="outline" size="sm" onClick={() => openEditionDialog(event.id)}>
-                <Calendar className="w-4 h-4 mr-2" />
-                Add Edition
-              </Button>
-            </div>
-            {event.editions.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Year</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {event.editions.map((edition) => (
-                    <TableRow key={edition.id}>
-                      <TableCell>{edition.year}</TableCell>
-                      <TableCell>{edition.location}</TableCell>
-                      <TableCell>{edition.date}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => openEditionDialog(event.id, edition)}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteEdition(event.id, edition.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            ) : (
-              <p className="text-sm text-muted-foreground text-center py-4">
-                No editions yet. Click "Add Edition" to create one.
-              </p>
-            )}
-          </CardContent>
-        </Card>
-      ))}
+      <div className="mb-6">
+        <form onSubmit={onSubmit} className="space-y-2">
+          <div>
+            <Label htmlFor="name">Nome</Label>
+            <Input
+              id="name"
+              required
+              value={form.name}
+              onChange={(e) => setForm({ ...form, name: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="sigla">Sigla</Label>
+            <Input
+              id="sigla"
+              value={form.sigla}
+              onChange={(e) => setForm({ ...form, sigla: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="promoter">Entidade Promotora</Label>
+            <Input
+              id="promoter"
+              value={form.promoter}
+              onChange={(e) => setForm({ ...form, promoter: e.target.value })}
+            />
+          </div>
+          <div>
+            <Label htmlFor="description">Descrição</Label>
+            <Textarea
+              id="description"
+              value={form.description}
+              onChange={(e) => setForm({ ...form, description: e.target.value })}
+            />
+          </div>
+          <div>
+            <Button type="submit" className="btn">
+              {editing ? "Salvar" : "Criar"}
+            </Button>
+          </div>
+          {error && <div className="text-red-600 mt-2">{error}</div>}
+        </form>
+      </div>
 
-      {events.length === 0 && (
-        <Card>
-          <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">No events yet. Create your first event to get started.</p>
-          </CardContent>
-        </Card>
-      )}
+      <div>
+        <h3 className="font-semibold mb-2">Lista de Eventos</h3>
+        {loading ? (
+          <div>Carregando...</div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Sigla</TableHead>
+                <TableHead>Promotora</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {events.map((ev) => (
+                <TableRow key={ev.id}>
+                  <TableCell>{ev.name}</TableCell>
+                  <TableCell>{ev.sigla}</TableCell>
+                  <TableCell>{ev.promoter}</TableCell>
+                  <TableCell className="text-right">
+                    <Button onClick={() => startEdit(ev)}>
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button onClick={() => onDelete(ev.id)}>
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
 
       {/* Event Dialog */}
-      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+      <Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingEvent ? "Edit Event" : "Create Event"}</DialogTitle>
+            <DialogTitle>{editing ? "Editar Evento" : "Criar Evento"}</DialogTitle>
             <DialogDescription>
-              {editingEvent ? "Update event information" : "Add a new event to the system"}
+              {editing ? "Atualize as informações do evento" : "Adicione um novo evento ao sistema"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="name">Event Name</Label>
+              <Label htmlFor="name">Nome do Evento</Label>
               <Input
                 id="name"
-                value={eventForm.name}
-                onChange={(e) => setEventForm({ ...eventForm, name: e.target.value })}
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </div>
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="sigla">Sigla</Label>
               <Input
-                id="category"
-                value={eventForm.category}
-                onChange={(e) => setEventForm({ ...eventForm, category: e.target.value })}
+                id="sigla"
+                value={form.sigla}
+                onChange={(e) => setForm({ ...form, sigla: e.target.value })}
               />
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="promoter">Entidade Promotora</Label>
+              <Input
+                id="promoter"
+                value={form.promoter}
+                onChange={(e) => setForm({ ...form, promoter: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="description">Descrição</Label>
               <Textarea
                 id="description"
-                value={eventForm.description}
-                onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
+                value={form.description}
+                onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEventDialogOpen(false)}>
-              Cancel
+            <Button className="btn-outline" onClick={() => setEditing(null)}>
+              Cancelar
             </Button>
-            <Button onClick={handleSaveEvent}>Save</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Edition Dialog */}
-      <Dialog open={isEditionDialogOpen} onOpenChange={setIsEditionDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingEdition ? "Edit Edition" : "Create Edition"}</DialogTitle>
-            <DialogDescription>
-              {editingEdition ? "Update edition information" : "Add a new edition to the event"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="year">Year</Label>
-              <Input
-                id="year"
-                type="number"
-                value={editionForm.year}
-                onChange={(e) => setEditionForm({ ...editionForm, year: parseInt(e.target.value) })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={editionForm.location}
-                onChange={(e) => setEditionForm({ ...editionForm, location: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="date">Date</Label>
-              <Input
-                id="date"
-                type="date"
-                value={editionForm.date}
-                onChange={(e) => setEditionForm({ ...editionForm, date: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditionDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSaveEdition}>Save</Button>
+            <Button onClick={onSubmit}>Salvar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
   );
-};
-
-export default EventsManager;
+}

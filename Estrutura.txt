@@ -1,6 +1,6 @@
-Pergunta: O que esse arquivo mmodels.py representa no meu app?
+Pergunta: O que esse arquivo models.py representa no meu app?
 
-Resposta GitHub Copilot
+Resposta: GitHub Copilot
 
 É o módulo que define os modelos (entidades) do app "library" — cada classe vira uma tabela no banco e o Django ORM mapeia campos e relações.
 

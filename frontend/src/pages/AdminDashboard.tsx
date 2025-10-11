@@ -41,7 +41,7 @@ const AdminDashboard = () => {
             <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
             <p className="text-sm text-muted-foreground">{userEmail}</p>
           </div>
-          <Button variant="outline" onClick={handleLogout}>
+          <Button onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
             Logout
           </Button>
