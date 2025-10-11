@@ -217,7 +217,6 @@ class ArticleListCreateAPIView(View):
             title=title,
             abstract=payload.get("abstract", ""),
             pdf_url=payload.get("pdf_url", ""),
-            pdf_file=file_obj,
             edition=edition,
             bibtex=payload.get("bibtex", ""),
         )
