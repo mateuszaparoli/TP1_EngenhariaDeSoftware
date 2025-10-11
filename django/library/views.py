@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from datetime import date
 import json  # Add this import
 
-from .models import Edition, Event, Article, Author
+from .models import Edition, Event, Article, Author, Subscription
 
 def _parse_date(s):
     if not s:
@@ -125,6 +125,17 @@ class EditionDetailView(View):
 class ArticleListCreateAPIView(View):
     def get(self, request):
         qs = Article.objects.select_related("edition", "edition__event").prefetch_related("authors").all()
+        # support filters via query params: title, author, event
+        title = request.GET.get('title')
+        author = request.GET.get('author')
+        event = request.GET.get('event')
+        if title:
+            qs = qs.filter(title__icontains=title)
+        if author:
+            qs = qs.filter(authors__name__icontains=author)
+        if event:
+            qs = qs.filter(edition__event__name__icontains=event)
+        qs = qs.distinct()
         data = [_article_to_dict(a) for a in qs]
         return JsonResponse(data, safe=False)
 
@@ -206,6 +217,7 @@ class ArticleListCreateAPIView(View):
             title=title,
             abstract=payload.get("abstract", ""),
             pdf_url=payload.get("pdf_url", ""),
+            pdf_file=file_obj,
             edition=edition,
             bibtex=payload.get("bibtex", ""),
         )
@@ -319,6 +331,102 @@ class ArticleDetailView(View):
                 os.remove(article.pdf_file.path)
         article.delete()
         return JsonResponse({}, status=204)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ArticleDetailView(View):
+    def get(self, request, pk):
+        a = get_object_or_404(Article.objects.select_related('edition', 'edition__event').prefetch_related('authors'), pk=pk)
+        return JsonResponse(_article_to_dict(a))
+
+    def put(self, request, pk):
+        a = get_object_or_404(Article, pk=pk)
+        # accept json or multipart
+        if request.content_type and request.content_type.startswith('application/json'):
+            try:
+                payload = json.loads(request.body.decode() or "{}")
+            except json.JSONDecodeError:
+                return JsonResponse({"error": "invalid json"}, status=400)
+            file_obj = None
+        else:
+            payload = request.POST.dict()
+            file_obj = request.FILES.get('pdf_file')
+
+        if 'title' in payload:
+            a.title = payload.get('title')
+        if 'abstract' in payload:
+            a.abstract = payload.get('abstract', '')
+        if 'pdf_url' in payload:
+            a.pdf_url = payload.get('pdf_url', '')
+        if file_obj:
+            a.pdf_file = file_obj
+        # edition handling
+        if 'edition_id' in payload and payload.get('edition_id'):
+            a.edition = get_object_or_404(Edition, pk=payload.get('edition_id'))
+        elif 'event_name' in payload and 'year' in payload:
+            ev, _ = Event.objects.get_or_create(name=payload.get('event_name'))
+            ed, _ = Edition.objects.get_or_create(event=ev, year=int(payload.get('year')))
+            a.edition = ed
+
+        # authors: list of names
+        authors = payload.get('authors')
+        if isinstance(authors, list):
+            a.authors.clear()
+            for name in authors:
+                if not name:
+                    continue
+                author, _ = Author.objects.get_or_create(name=name)
+                a.authors.add(author)
+
+        a.save()
+        return JsonResponse(_article_to_dict(a))
+
+    def delete(self, request, pk):
+        a = get_object_or_404(Article, pk=pk)
+        a.delete()
+        return JsonResponse({}, status=204)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AuthorArticlesView(View):
+    def get(self, request, pk):
+        author = get_object_or_404(Author, pk=pk)
+        qs = author.articles.select_related('edition', 'edition__event').all().order_by('edition__year')
+        # group by year
+        grouped = {}
+        for art in qs:
+            year = art.edition.year
+            grouped.setdefault(year, []).append(_article_to_dict(art))
+        return JsonResponse(grouped)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SubscriptionCreateView(View):
+    def post(self, request):
+        try:
+            payload = json.loads(request.body.decode() or "{}")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "invalid json"}, status=400)
+        email = payload.get('email')
+        if not email:
+            return JsonResponse({"error": "email required"}, status=400)
+        author_id = payload.get('author')
+        event_id = payload.get('event')
+        author = None
+        event = None
+        if author_id:
+            author = get_object_or_404(Author, pk=author_id)
+        if event_id:
+            event = get_object_or_404(Event, pk=event_id)
+        sub = Subscription.objects.create(email=email, author=author, event=event)
+        return JsonResponse({"id": sub.id, "email": sub.email}, status=201)
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class SubscriptionListView(View):
+    def get(self, request):
+        subs = Subscription.objects.all().values('id', 'email', 'author_id', 'event_id', 'created_at')
+        return JsonResponse(list(subs), safe=False)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class EventListCreateView(View):

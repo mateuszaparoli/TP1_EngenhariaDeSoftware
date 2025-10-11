@@ -32,7 +32,33 @@ class Article(models.Model):
 	edition = models.ForeignKey(Edition, on_delete=models.CASCADE, related_name='articles', null=True, blank=True)
 	authors = models.ManyToManyField(Author, related_name='articles', blank=True)
 	bibtex = models.TextField(blank=True, default='')
+	abstract = models.TextField(blank=True)
+	pdf_url = models.URLField(blank=True)
+	# store an uploaded PDF file (optional)
+	pdf_file = models.FileField(upload_to='pdfs/', blank=True, null=True)
+	edition = models.ForeignKey(Edition, on_delete=models.CASCADE, related_name='articles')
+	authors = models.ManyToManyField(Author, related_name='articles')
+	bibtex = models.TextField(blank=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):
 		return self.title
+
+
+class Subscription(models.Model):
+	"""A lightweight subscription model so users can subscribe to authors or events by email.
+
+	If both `author` and `event` are null, it's a general subscription for any new article.
+	"""
+	email = models.EmailField()
+	author = models.ForeignKey(Author, null=True, blank=True, on_delete=models.CASCADE, related_name='subscriptions')
+	event = models.ForeignKey(Event, null=True, blank=True, on_delete=models.CASCADE, related_name='subscriptions')
+	created_at = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		parts = [self.email]
+		if self.author:
+			parts.append(f"author={self.author.name}")
+		if self.event:
+			parts.append(f"event={self.event.name}")
+		return " | ".join(parts)

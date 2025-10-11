@@ -25,6 +25,9 @@ from library.views import (
     EditionDetailView,
     EventListCreateView,
     EventDetailView,
+    AuthorArticlesView,
+    SubscriptionCreateView,
+    SubscriptionListView,
 )
 
 urlpatterns = [
@@ -35,6 +38,9 @@ urlpatterns = [
     path('api/editions/<int:pk>/', EditionDetailView.as_view(), name='edition-detail'),
     path('api/events/', EventListCreateView.as_view(), name='event-list-create'),
     path('api/events/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
+    path('api/authors/<int:pk>/articles/', AuthorArticlesView.as_view(), name='author-articles'),
+    path('api/subscriptions/', SubscriptionListView.as_view(), name='subscription-list'),
+    path('api/subscriptions/create/', SubscriptionCreateView.as_view(), name='subscription-create'),
 ]
 
 if settings.DEBUG:

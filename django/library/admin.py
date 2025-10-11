@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Event, Edition, Author, Article
+from .models import Subscription
 
 class EditionInline(admin.TabularInline):
     model = Edition
@@ -33,3 +34,9 @@ class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'edition', 'created_at')
     search_fields = ('title', 'bibtex')
     filter_horizontal = ('authors',)
+
+
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('email', 'author', 'event', 'created_at')
+    search_fields = ('email',)
