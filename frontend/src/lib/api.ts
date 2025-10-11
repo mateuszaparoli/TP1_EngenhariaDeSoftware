@@ -79,7 +79,7 @@ export async function deleteEvent(id: number): Promise<void> {
   if (!res.ok && res.status !== 204) await handleRes(res);
 }
 
-export async function getEditions(): Promise<EditionItem[]> {
+export async function getEditions(): Promise<any[]> {
   const res = await fetch(`${API_URL}/api/editions/`);
   return handleRes(res);
 }
@@ -159,4 +159,23 @@ export async function updateArticle(id: number, payload: Partial<ArticlePayload>
 export async function deleteArticle(id: number): Promise<void> {
   const res = await fetch(`${API_URL}/api/articles/${id}/`, { method: 'DELETE' });
   if (!res.ok && res.status !== 204) await handleRes(res);
+}
+
+export async function getAuthorArticles(authorId: number): Promise<any> {
+  const res = await fetch(`${API_URL}/api/authors/${authorId}/articles/`);
+  return handleRes(res);
+}
+
+export async function createSubscription(payload: { email: string; author?: number; event?: number }): Promise<any> {
+  const res = await fetch(`${API_URL}/api/subscriptions/create/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return handleRes(res);
+}
+
+export async function listSubscriptions(): Promise<any[]> {
+  const res = await fetch(`${API_URL}/api/subscriptions/`);
+  return handleRes(res);
 }
