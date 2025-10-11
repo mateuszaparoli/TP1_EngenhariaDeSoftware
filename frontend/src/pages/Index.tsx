@@ -38,9 +38,9 @@ const Index = () => {
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-smooth">
               Features
             </a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground transition-smooth">
+            {/* <a href="#about" className="text-muted-foreground hover:text-foreground transition-smooth">
               About
-            </a>
+            </a> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -69,7 +69,7 @@ const Index = () => {
             <div className="max-w-2xl">
               <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
                 Discover, Store & 
-                <span className="bg-gradient-hero bg-clip-text text-transparent"> Research</span> 
+                <span className="bg-gradient-hero bg-clip-text text-transparent"> Research </span> 
                 Scientific Papers
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
@@ -228,7 +228,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section */}{/*
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
@@ -248,9 +248,9 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section>*/}
 
-      {/* Footer */}
+      {/* Footer */}{/*
       <footer className="bg-card border-t border-border py-12">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8">
@@ -292,7 +292,7 @@ const Index = () => {
             <p>&copy; 2024 ResearchHub. All rights reserved.</p>
           </div>
         </div>
-      </footer>
+      </footer>*/}
     </div>
   );
 };

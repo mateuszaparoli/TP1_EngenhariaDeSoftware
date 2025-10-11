@@ -47,6 +47,7 @@ export type ArticlePayload = {
 async function handleRes(res: Response) {
   const text = await res.text();
   const json = text ? JSON.parse(text) : null;
+  console.log(json);
   if (!res.ok) throw new Error(json?.error || res.statusText);
   return json;
 }
