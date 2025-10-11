@@ -26,11 +26,12 @@ class Author(models.Model):
 
 class Article(models.Model):
 	title = models.CharField(max_length=500)
-	abstract = models.TextField(blank=True)
-	pdf_url = models.URLField(blank=True)
-	edition = models.ForeignKey(Edition, on_delete=models.CASCADE, related_name='articles')
-	authors = models.ManyToManyField(Author, related_name='articles')
-	bibtex = models.TextField(blank=True)
+	abstract = models.TextField(blank=True, default='')
+	pdf_url = models.CharField(max_length=500, blank=True, default='')
+	pdf_file = models.FileField(upload_to='articles/', blank=True, null=True)  # Ensure this exists
+	edition = models.ForeignKey(Edition, on_delete=models.CASCADE, related_name='articles', null=True, blank=True)
+	authors = models.ManyToManyField(Author, related_name='articles', blank=True)
+	bibtex = models.TextField(blank=True, default='')
 	created_at = models.DateTimeField(auto_now_add=True)
 
 	def __str__(self):

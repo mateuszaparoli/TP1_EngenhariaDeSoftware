@@ -16,8 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from library.views import (
     ArticleListCreateAPIView,
+    ArticleDetailView,
     EditionListCreateView,
     EditionDetailView,
     EventListCreateView,
@@ -27,8 +30,12 @@ from library.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/articles/', ArticleListCreateAPIView.as_view(), name='article-list-create'),
+    path('api/articles/<int:pk>/', ArticleDetailView.as_view(), name='article-detail'),
     path('api/editions/', EditionListCreateView.as_view(), name='edition-list-create'),
     path('api/editions/<int:pk>/', EditionDetailView.as_view(), name='edition-detail'),
     path('api/events/', EventListCreateView.as_view(), name='event-list-create'),
     path('api/events/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

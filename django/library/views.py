@@ -3,8 +3,8 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
-import json
 from datetime import date
+import json  # Add this import
 
 from .models import Edition, Event, Article, Author
 
@@ -30,11 +30,16 @@ def _author_to_dict(a: Author):
     return {"id": a.id, "name": a.name, "email": a.email or None}
 
 def _article_to_dict(a: Article):
+    pdf_url = a.pdf_url or ""
+    if a.pdf_file:
+        # Use request to build full URL or just the path
+        pdf_url = f"http://localhost:8000{a.pdf_file.url}"  # or just a.pdf_file.url
+    
     return {
         "id": a.id,
         "title": a.title,
         "abstract": a.abstract or None,
-        "pdf_url": a.pdf_url or None,
+        "pdf_url": pdf_url or None,
         "edition": _edition_to_dict(a.edition) if a.edition_id else None,
         "authors": [_author_to_dict(x) for x in a.authors.all()],
         "bibtex": a.bibtex or None,
@@ -124,6 +129,53 @@ class ArticleListCreateAPIView(View):
         return JsonResponse(data, safe=False)
 
     def post(self, request):
+        print(f"Content-Type: {request.content_type}")  # Debug
+        print(f"FILES: {request.FILES}")  # Debug
+        print(f"POST: {request.POST}")  # Debug
+        
+        # Handle multipart/form-data for file uploads
+        if 'pdf_file' in request.FILES or request.POST:
+            title = request.POST.get("title")
+            if not title:
+                return JsonResponse({"error": "title is required"}, status=400)
+
+            # Get edition
+            edition = None
+            edition_id = request.POST.get("edition_id")
+            if edition_id:
+                edition = get_object_or_404(Edition, pk=edition_id)
+
+            article = Article.objects.create(
+                title=title,
+                abstract=request.POST.get("abstract", ""),
+                pdf_url=request.POST.get("pdf_url", ""),
+                edition=edition,
+                bibtex=request.POST.get("bibtex", ""),
+            )
+
+            # Handle file upload
+            if 'pdf_file' in request.FILES:
+                print(f"Saving PDF file: {request.FILES['pdf_file'].name}")  # Debug
+                article.pdf_file = request.FILES['pdf_file']
+                article.save()
+                print(f"PDF saved at: {article.pdf_file.path}")  # Debug
+
+            # Handle authors
+            authors_str = request.POST.get("authors", "")
+            if authors_str:
+                try:
+                    authors = json.loads(authors_str)
+                    for name in authors:
+                        if not name:
+                            continue
+                        author, _ = Author.objects.get_or_create(name=name)
+                        article.authors.add(author)
+                except json.JSONDecodeError:
+                    pass
+
+            return JsonResponse(_article_to_dict(article), status=201)
+
+        # Handle JSON payload (backward compatibility)
         try:
             payload = json.loads(request.body.decode() or "{}")
         except json.JSONDecodeError:
@@ -133,7 +185,6 @@ class ArticleListCreateAPIView(View):
         if not title:
             return JsonResponse({"error": "title is required"}, status=400)
 
-        # edition: accept edition_id or (event_name + year) or (event_id + year)
         edition = None
         if "edition_id" in payload and payload.get("edition_id"):
             edition = get_object_or_404(Edition, pk=payload["edition_id"])
@@ -148,7 +199,7 @@ class ArticleListCreateAPIView(View):
             elif event_name:
                 event, _ = Event.objects.get_or_create(name=event_name)
             else:
-                return JsonResponse({"error": "event_id or event_name required when not using edition_id"}, status=400)
+                return JsonResponse({"error": "event_id or event_name required"}, status=400)
             edition, _ = Edition.objects.get_or_create(event=event, year=int(year))
 
         article = Article.objects.create(
@@ -159,7 +210,6 @@ class ArticleListCreateAPIView(View):
             bibtex=payload.get("bibtex", ""),
         )
 
-        # authors: accept list of names
         authors = payload.get("authors", [])
         if isinstance(authors, list):
             for name in authors:
@@ -170,6 +220,105 @@ class ArticleListCreateAPIView(View):
 
         article.save()
         return JsonResponse(_article_to_dict(article), status=201)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ArticleDetailView(View):
+    def get(self, request, pk):
+        article = get_object_or_404(
+            Article.objects.select_related("edition", "edition__event").prefetch_related("authors"),
+            pk=pk
+        )
+        return JsonResponse(_article_to_dict(article))
+
+    def put(self, request, pk):
+        print(f"=== UPDATE ARTICLE {pk} ===")  # Debug
+        print(f"Content-Type: {request.content_type}")  # Debug
+        print(f"POST data: {request.POST}")  # Debug
+        print(f"FILES: {request.FILES}")  # Debug
+        
+        article = get_object_or_404(Article, pk=pk)
+
+        # Handle multipart/form-data for file uploads
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            if "title" in request.POST:
+                print(f"Updating title to: {request.POST['title']}")  # Debug
+                article.title = request.POST["title"]
+            if "abstract" in request.POST:
+                article.abstract = request.POST.get("abstract", "")
+            if "pdf_url" in request.POST:
+                article.pdf_url = request.POST.get("pdf_url", "")
+            if "bibtex" in request.POST:
+                article.bibtex = request.POST.get("bibtex", "")
+            
+            # Handle edition
+            if "edition_id" in request.POST:
+                print(f"Updating edition to: {request.POST['edition_id']}")  # Debug
+                article.edition = get_object_or_404(Edition, pk=request.POST["edition_id"])
+
+            # Handle file upload
+            if 'pdf_file' in request.FILES:
+                print(f"Updating PDF file: {request.FILES['pdf_file'].name}")  # Debug
+                article.pdf_file = request.FILES['pdf_file']
+
+            # Handle authors
+            authors_str = request.POST.get("authors")
+            if authors_str:
+                print(f"Updating authors: {authors_str}")  # Debug
+                try:
+                    authors = json.loads(authors_str)
+                    article.authors.clear()
+                    for name in authors:
+                        if not name:
+                            continue
+                        author, created = Author.objects.get_or_create(name=name)
+                        print(f"Adding author: {author.name} (created: {created})")  # Debug
+                        article.authors.add(author)
+                except json.JSONDecodeError as e:
+                    print(f"Error parsing authors JSON: {e}")  # Debug
+
+            article.save()
+            print(f"Article saved successfully")  # Debug
+            return JsonResponse(_article_to_dict(article))
+
+        # Handle JSON payload
+        try:
+            payload = json.loads(request.body.decode() or "{}")
+            print(f"JSON payload: {payload}")  # Debug
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "invalid json"}, status=400)
+
+        if "title" in payload:
+            article.title = payload["title"]
+        if "abstract" in payload:
+            article.abstract = payload.get("abstract", "")
+        if "pdf_url" in payload:
+            article.pdf_url = payload.get("pdf_url", "")
+        if "bibtex" in payload:
+            article.bibtex = payload.get("bibtex", "")
+        
+        if "edition_id" in payload:
+            article.edition = get_object_or_404(Edition, pk=payload["edition_id"])
+
+        if "authors" in payload:
+            article.authors.clear()
+            for name in payload["authors"]:
+                if not name:
+                    continue
+                author, _ = Author.objects.get_or_create(name=name)
+                article.authors.add(author)
+
+        article.save()
+        return JsonResponse(_article_to_dict(article))
+
+    def delete(self, request, pk):
+        article = get_object_or_404(Article, pk=pk)
+        # Delete file if exists
+        if article.pdf_file:
+            import os
+            if os.path.isfile(article.pdf_file.path):
+                os.remove(article.pdf_file.path)
+        article.delete()
+        return JsonResponse({}, status=204)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class EventListCreateView(View):

@@ -6,6 +6,7 @@ import { LogOut, Plus } from "lucide-react";
 import { toast } from "sonner";
 import EventsManager from "@/components/admin/EventsManager";
 import PapersManager from "@/components/admin/PapersManager";
+import EditionsManager from "@/components/admin/EditionsManager";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -48,18 +49,23 @@ const AdminDashboard = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="events" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="events">Events & Editions</TabsTrigger>
-            <TabsTrigger value="papers">Papers</TabsTrigger>
+      <main className="container mx-auto py-8">
+        <Tabs defaultValue="events" className="w-full">
+          <TabsList>
+            <TabsTrigger value="events">Eventos</TabsTrigger>
+            <TabsTrigger value="editions">Edições</TabsTrigger>
+            <TabsTrigger value="papers">Artigos</TabsTrigger>
           </TabsList>
-
-          <TabsContent value="events" className="space-y-4">
+          
+          <TabsContent value="events">
             <EventsManager />
           </TabsContent>
-
-          <TabsContent value="papers" className="space-y-4">
+          
+          <TabsContent value="editions">
+            <EditionsManager />
+          </TabsContent>
+          
+          <TabsContent value="papers">
             <PapersManager />
           </TabsContent>
         </Tabs>
