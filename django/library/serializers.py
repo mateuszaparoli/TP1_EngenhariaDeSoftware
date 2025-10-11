@@ -20,3 +20,24 @@ class ArticleSerializer(serializers.ModelSerializer):
             author, _ = Author.objects.get_or_create(**author_data)
             article.authors.add(author)
         return article
+
+    def update(self, instance, validated_data):
+        authors_data = validated_data.pop('authors', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        if authors_data is not None:
+            instance.authors.clear()
+            for author_data in authors_data:
+                author, _ = Author.objects.get_or_create(**author_data)
+                instance.authors.add(author)
+        return instance
+
+
+from rest_framework import serializers
+from .models import Subscription
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ['id', 'email', 'author', 'event', 'created_at']
