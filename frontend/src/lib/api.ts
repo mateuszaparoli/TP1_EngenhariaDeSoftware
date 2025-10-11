@@ -80,7 +80,7 @@ export async function deleteEvent(id: number): Promise<void> {
   if (!res.ok && res.status !== 204) await handleRes(res);
 }
 
-export async function getEditions(): Promise<any[]> {
+export async function getEditions(): Promise<EditionItem[]> {
   const res = await fetch(`${API_URL}/api/editions/`);
   return handleRes(res);
 }
