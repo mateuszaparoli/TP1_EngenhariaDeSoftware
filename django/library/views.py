@@ -177,14 +177,20 @@ class ArticleListCreateAPIView(View):
             bibtex=payload.get("bibtex", ""),
         )
 
-        # authors: accept list of names
+        # authors: accept list of names or comma/semicolon-separated string
         authors = payload.get("authors", [])
         if isinstance(authors, list):
-            for name in authors:
-                if not name:
-                    continue
-                author, _ = Author.objects.get_or_create(name=name)
-                article.authors.add(author)
+            names = authors
+        elif isinstance(authors, str):
+            # support comma or semicolon separated lists
+            parts = [p.strip() for p in authors.replace(';', ',').split(',')]
+            names = [p for p in parts if p]
+        else:
+            names = []
+
+        for name in names:
+            author, _ = Author.objects.get_or_create(name=name)
+            article.authors.add(author)
 
         article.save()
         return JsonResponse(_article_to_dict(article), status=201)
@@ -225,13 +231,19 @@ class ArticleDetailView(View):
             ed, _ = Edition.objects.get_or_create(event=ev, year=int(payload.get('year')))
             a.edition = ed
 
-        # authors: list of names
+        # authors: accept list or comma/semicolon-separated string
         authors = payload.get('authors')
         if isinstance(authors, list):
+            names = authors
+        elif isinstance(authors, str):
+            parts = [p.strip() for p in authors.replace(';', ',').split(',')]
+            names = [p for p in parts if p]
+        else:
+            names = None
+
+        if names is not None:
             a.authors.clear()
-            for name in authors:
-                if not name:
-                    continue
+            for name in names:
                 author, _ = Author.objects.get_or_create(name=name)
                 a.authors.add(author)
 

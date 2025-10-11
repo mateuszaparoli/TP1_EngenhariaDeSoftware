@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus, Edit, Trash2, FileText } from "lucide-react";
+import { getArticles, createArticle, updateArticle, deleteArticle } from "../../lib/api";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -48,40 +49,87 @@ const PapersManager = () => {
   });
 
   useEffect(() => {
-    const storedPapers = localStorage.getItem("papers");
-    if (storedPapers) {
-      setPapers(JSON.parse(storedPapers));
-    }
+    (async () => {
+      try {
+        const data = await getArticles();
+        // map backend shape to local Paper shape
+        const mapped = data.map((a: any) => ({
+          id: String(a.id),
+          title: a.title,
+          authors: a.authors.map((x: any) => x.name).join(', '),
+          abstract: a.abstract || '',
+          year: a.edition?.year || new Date().getFullYear(),
+          event: a.edition?.event?.name || '',
+          url: a.pdf_url || '',
+        }));
+        setPapers(mapped);
+      } catch (err) {
+        console.error('Failed to load papers', err);
+      }
+    })();
   }, []);
 
-  const savePapers = (updatedPapers: Paper[]) => {
-    setPapers(updatedPapers);
-    localStorage.setItem("papers", JSON.stringify(updatedPapers));
-  };
-
-  const handleSavePaper = () => {
-    if (editingPaper) {
-      const updatedPapers = papers.map((p) =>
-        p.id === editingPaper.id ? { ...editingPaper, ...paperForm } : p
-      );
-      savePapers(updatedPapers);
-      toast.success("Paper updated successfully");
-    } else {
-      const newPaper: Paper = {
-        id: Date.now().toString(),
-        ...paperForm,
-      };
-      savePapers([...papers, newPaper]);
-      toast.success("Paper created successfully");
+  const handleSavePaper = async () => {
+    try {
+      if (editingPaper) {
+        // update
+        await updateArticle(Number(editingPaper.id), {
+          title: paperForm.title,
+          abstract: paperForm.abstract,
+          authors: paperForm.authors,
+          event_name: paperForm.event,
+          year: paperForm.year,
+          pdf_url: paperForm.url,
+        }, (paperForm as any).file);
+        toast.success("Paper updated successfully");
+      } else {
+        await createArticle({
+          title: paperForm.title,
+          abstract: paperForm.abstract,
+          authors: paperForm.authors,
+          event_name: paperForm.event,
+          year: paperForm.year,
+          pdf_url: paperForm.url,
+        }, (paperForm as any).file);
+        toast.success("Paper created successfully");
+      }
+      // refresh list
+      const data = await getArticles();
+      const mapped = data.map((a: any) => ({
+        id: String(a.id),
+        title: a.title,
+        authors: a.authors.map((x: any) => x.name).join(', '),
+        abstract: a.abstract || '',
+        year: a.edition?.year || new Date().getFullYear(),
+        event: a.edition?.event?.name || '',
+        url: a.pdf_url || '',
+      }));
+      setPapers(mapped);
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (err:any) {
+      toast.error(err?.message || 'Error saving paper')
     }
-    setIsDialogOpen(false);
-    resetForm();
   };
 
-  const handleDeletePaper = (id: string) => {
-    const updatedPapers = papers.filter((p) => p.id !== id);
-    savePapers(updatedPapers);
-    toast.success("Paper deleted successfully");
+  const handleDeletePaper = async (id: string) => {
+    try {
+      await deleteArticle(Number(id));
+      const data = await getArticles();
+      const mapped = data.map((a: any) => ({
+        id: String(a.id),
+        title: a.title,
+        authors: a.authors.map((x: any) => x.name).join(', '),
+        abstract: a.abstract || '',
+        year: a.edition?.year || new Date().getFullYear(),
+        event: a.edition?.event?.name || '',
+        url: a.pdf_url || '',
+      }));
+      setPapers(mapped);
+      toast.success("Paper deleted successfully");
+    } catch (err) {
+      toast.error('Failed to delete paper');
+    }
   };
 
   const openDialog = (paper?: Paper) => {
@@ -240,6 +288,19 @@ const PapersManager = () => {
                 placeholder="https://..."
                 value={paperForm.url}
                 onChange={(e) => setPaperForm({ ...paperForm, url: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label htmlFor="pdf">PDF (optional)</Label>
+              <Input
+                id="pdf"
+                type="file"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  // store file in state via a hidden prop on paperForm
+                  (paperForm as any).file = f;
+                  setPaperForm({ ...paperForm });
+                }}
               />
             </div>
           </div>
