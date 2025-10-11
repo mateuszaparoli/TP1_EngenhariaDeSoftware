@@ -29,7 +29,7 @@ export default function EventsManager(): React.JSX.Element {
   const [error, setError] = useState<string | null>(null);
 
   const [editing, setEditing] = useState<EventItem | null>(null);
-  const [form, setForm] = useState<EventItem>({ name: "", sigla: "", promoter: "", description: "" });
+  const [form, setForm] = useState<EventItem>({ name: "", description: "" });
 
   async function load() {
     setLoading(true);
@@ -50,7 +50,7 @@ export default function EventsManager(): React.JSX.Element {
 
   function startCreate() {
     setEditing(null);
-    setForm({ name: "", sigla: "", promoter: "", description: "" });
+    setForm({ name: "", description: "" });
   }
 
   function startEdit(ev: EventItem) {
@@ -101,34 +101,20 @@ export default function EventsManager(): React.JSX.Element {
       <div className="mb-6">
         <form onSubmit={onSubmit} className="space-y-2">
           <div>
-            <Label htmlFor="name">Nome</Label>
+            <Label htmlFor="name">Nome do Evento</Label>
             <Input
               id="name"
               required
+              placeholder="Ex: Simpósio Brasileiro de Engenharia de Software"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="sigla">Sigla</Label>
-            <Input
-              id="sigla"
-              value={form.sigla}
-              onChange={(e) => setForm({ ...form, sigla: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="promoter">Entidade Promotora</Label>
-            <Input
-              id="promoter"
-              value={form.promoter}
-              onChange={(e) => setForm({ ...form, promoter: e.target.value })}
             />
           </div>
           <div>
             <Label htmlFor="description">Descrição</Label>
             <Textarea
               id="description"
+              placeholder="Descrição do evento..."
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
             />
@@ -151,8 +137,7 @@ export default function EventsManager(): React.JSX.Element {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Sigla</TableHead>
-                <TableHead>Promotora</TableHead>
+                <TableHead>Descrição</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -160,8 +145,7 @@ export default function EventsManager(): React.JSX.Element {
               {events.map((ev) => (
                 <TableRow key={ev.id}>
                   <TableCell>{ev.name}</TableCell>
-                  <TableCell>{ev.sigla}</TableCell>
-                  <TableCell>{ev.promoter}</TableCell>
+                  <TableCell>{ev.description}</TableCell>
                   <TableCell className="text-right">
                     <Button onClick={() => startEdit(ev)}>
                       <Edit className="w-4 h-4" />
@@ -176,58 +160,6 @@ export default function EventsManager(): React.JSX.Element {
           </Table>
         )}
       </div>
-
-      {/* Event Dialog */}
-      <Dialog open={!!editing} onOpenChange={() => setEditing(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editing ? "Editar Evento" : "Criar Evento"}</DialogTitle>
-            <DialogDescription>
-              {editing ? "Atualize as informações do evento" : "Adicione um novo evento ao sistema"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name">Nome do Evento</Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="sigla">Sigla</Label>
-              <Input
-                id="sigla"
-                value={form.sigla}
-                onChange={(e) => setForm({ ...form, sigla: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="promoter">Entidade Promotora</Label>
-              <Input
-                id="promoter"
-                value={form.promoter}
-                onChange={(e) => setForm({ ...form, promoter: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button className="btn-outline" onClick={() => setEditing(null)}>
-              Cancelar
-            </Button>
-            <Button onClick={onSubmit}>Salvar</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

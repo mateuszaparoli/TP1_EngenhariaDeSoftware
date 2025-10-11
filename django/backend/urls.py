@@ -20,6 +20,8 @@ from library.views import (
     ArticleListCreateAPIView,
     EditionListCreateView,
     EditionDetailView,
+    EventListCreateView,
+    EventDetailView,
 )
 
 urlpatterns = [
@@ -27,4 +29,6 @@ urlpatterns = [
     path('api/articles/', ArticleListCreateAPIView.as_view(), name='article-list-create'),
     path('api/editions/', EditionListCreateView.as_view(), name='edition-list-create'),
     path('api/editions/<int:pk>/', EditionDetailView.as_view(), name='edition-detail'),
+    path('api/events/', EventListCreateView.as_view(), name='event-list-create'),
+    path('api/events/<int:pk>/', EventDetailView.as_view(), name='event-detail'),
 ]

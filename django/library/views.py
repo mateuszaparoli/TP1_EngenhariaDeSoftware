@@ -170,3 +170,53 @@ class ArticleListCreateAPIView(View):
 
         article.save()
         return JsonResponse(_article_to_dict(article), status=201)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class EventListCreateView(View):
+    def get(self, request):
+        events = Event.objects.all()
+        data = [{"id": e.id, "name": e.name, "description": e.description or ""} for e in events]
+        return JsonResponse(data, safe=False)
+    
+    def post(self, request):
+        try:
+            payload = json.loads(request.body.decode() or "{}")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "invalid json"}, status=400)
+        
+        name = payload.get("name")
+        if not name:
+            return JsonResponse({"error": "name is required"}, status=400)
+        
+        event = Event.objects.create(
+            name=name,
+            description=payload.get("description", "")
+        )
+        return JsonResponse({"id": event.id, "name": event.name, "description": event.description}, status=201)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class EventDetailView(View):
+    def get(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+        return JsonResponse({"id": event.id, "name": event.name, "description": event.description})
+    
+    def put(self, request, pk):
+        try:
+            payload = json.loads(request.body.decode() or "{}")
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "invalid json"}, status=400)
+        
+        event = get_object_or_404(Event, pk=pk)
+        
+        if "name" in payload:
+            event.name = payload["name"]
+        if "description" in payload:
+            event.description = payload.get("description", "")
+        
+        event.save()
+        return JsonResponse({"id": event.id, "name": event.name, "description": event.description})
+    
+    def delete(self, request, pk):
+        event = get_object_or_404(Event, pk=pk)
+        event.delete()
+        return JsonResponse({}, status=204)

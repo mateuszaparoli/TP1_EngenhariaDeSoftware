@@ -1,8 +1,8 @@
+const API_URL = 'http://localhost:8000';
+
 export type EventItem = {
   id?: number;
   name: string;
-  sigla?: string;
-  promoter?: string;
   description?: string;
 };
 
@@ -14,12 +14,12 @@ async function handleRes(res: Response) {
 }
 
 export async function getEvents(): Promise<EventItem[]> {
-  const res = await fetch('/api/events/');
+  const res = await fetch(`${API_URL}/api/events/`);
   return handleRes(res);
 }
 
 export async function createEvent(payload: EventItem): Promise<EventItem> {
-  const res = await fetch('/api/events/', {
+  const res = await fetch(`${API_URL}/api/events/`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -28,7 +28,7 @@ export async function createEvent(payload: EventItem): Promise<EventItem> {
 }
 
 export async function updateEvent(id: number, payload: Partial<EventItem>): Promise<EventItem> {
-  const res = await fetch(`/api/events/${id}/`, {
+  const res = await fetch(`${API_URL}/api/events/${id}/`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -37,6 +37,6 @@ export async function updateEvent(id: number, payload: Partial<EventItem>): Prom
 }
 
 export async function deleteEvent(id: number): Promise<void> {
-  const res = await fetch(`/api/events/${id}/`, { method: 'DELETE' });
+  const res = await fetch(`${API_URL}/api/events/${id}/`, { method: 'DELETE' });
   if (!res.ok && res.status !== 204) await handleRes(res);
 }
