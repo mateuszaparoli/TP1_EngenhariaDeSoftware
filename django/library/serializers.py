@@ -4,7 +4,7 @@ from library.models import Article, Author, Edition, Event, Subscription
 class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'name', 'sigla', 'entidade_promotora']
 
 class EditionSerializer(serializers.ModelSerializer):
     event = EventSerializer(read_only=True)

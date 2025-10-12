@@ -2,7 +2,8 @@ from django.db import models
 
 class Event(models.Model):
 	name = models.CharField(max_length=255)
-	description = models.TextField(blank=True)
+	sigla = models.CharField(max_length=50, blank=True, default='')  # Acronym
+	entidade_promotora = models.CharField(max_length=500, blank=True, default='')  # Promoting entity
 
 	def __str__(self):
 		return self.name

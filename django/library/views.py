@@ -20,7 +20,12 @@ def _parse_date(s):
 def _edition_to_dict(ed: Edition):
     return {
         "id": ed.id,
-        "event": {"id": ed.event.id, "name": ed.event.name},
+        "event": {
+            "id": ed.event.id, 
+            "name": ed.event.name,
+            "sigla": ed.event.sigla or "",
+            "entidade_promotora": ed.event.entidade_promotora or ""
+        },
         "year": ed.year,
         "location": ed.location or None,
         "start_date": ed.start_date.isoformat() if ed.start_date else None,
@@ -491,7 +496,12 @@ class SubscriptionListView(View):
 class EventListCreateView(View):
     def get(self, request):
         events = Event.objects.all()
-        data = [{"id": e.id, "name": e.name, "description": e.description or ""} for e in events]
+        data = [{
+            "id": e.id, 
+            "name": e.name,
+            "sigla": e.sigla or "",
+            "entidade_promotora": e.entidade_promotora or ""
+        } for e in events]
         return JsonResponse(data, safe=False)
     
     def post(self, request):
@@ -506,15 +516,26 @@ class EventListCreateView(View):
         
         event = Event.objects.create(
             name=name,
-            description=payload.get("description", "")
+            sigla=payload.get("sigla", ""),
+            entidade_promotora=payload.get("entidade_promotora", "")
         )
-        return JsonResponse({"id": event.id, "name": event.name, "description": event.description}, status=201)
+        return JsonResponse({
+            "id": event.id, 
+            "name": event.name,
+            "sigla": event.sigla,
+            "entidade_promotora": event.entidade_promotora
+        }, status=201)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class EventDetailView(View):
     def get(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
-        return JsonResponse({"id": event.id, "name": event.name, "description": event.description})
+        return JsonResponse({
+            "id": event.id, 
+            "name": event.name,
+            "sigla": event.sigla or "",
+            "entidade_promotora": event.entidade_promotora or ""
+        })
     
     def put(self, request, pk):
         try:
@@ -526,11 +547,18 @@ class EventDetailView(View):
         
         if "name" in payload:
             event.name = payload["name"]
-        if "description" in payload:
-            event.description = payload.get("description", "")
+        if "sigla" in payload:
+            event.sigla = payload.get("sigla", "")
+        if "entidade_promotora" in payload:
+            event.entidade_promotora = payload.get("entidade_promotora", "")
         
         event.save()
-        return JsonResponse({"id": event.id, "name": event.name, "description": event.description})
+        return JsonResponse({
+            "id": event.id, 
+            "name": event.name,
+            "sigla": event.sigla,
+            "entidade_promotora": event.entidade_promotora
+        })
     
     def delete(self, request, pk):
         event = get_object_or_404(Event, pk=pk)
