@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Edit, Trash2, FileText, Plus } from "lucide-react";
@@ -17,6 +18,7 @@ export default function PapersManager(): React.JSX.Element {
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageInput, setPageInput] = useState("");
   const articlesPerPage = 10;
 
   useEffect(() => {
@@ -27,7 +29,11 @@ export default function PapersManager(): React.JSX.Element {
     setLoading(true);
     try {
       const articlesData = await getArticles();
-      setArticles(articlesData);
+      // Sort articles alphabetically by title
+      const sortedArticles = articlesData.sort((a, b) => 
+        a.title.localeCompare(b.title, 'pt-BR', { sensitivity: 'base' })
+      );
+      setArticles(sortedArticles);
     } catch (err: any) {
       toast.error(err.message || "Erro ao carregar dados");
     } finally {
@@ -108,6 +114,17 @@ export default function PapersManager(): React.JSX.Element {
     
     return pages;
   };
+
+  function handlePageJump(e: React.FormEvent) {
+    e.preventDefault();
+    const pageNum = parseInt(pageInput);
+    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
+      setPageInput("");
+    } else {
+      toast.error(`Por favor, insira um número entre 1 e ${totalPages}`);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -202,7 +219,7 @@ export default function PapersManager(): React.JSX.Element {
 
       {/* Pagination */}
       {!loading && articles.length > articlesPerPage && (
-        <div className="flex justify-center mt-6">
+        <div className="flex flex-col items-center gap-4 mt-6">
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -232,6 +249,23 @@ export default function PapersManager(): React.JSX.Element {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
+
+          {/* Page Jump Input */}
+          <form onSubmit={handlePageJump} className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Ir para página:</span>
+            <Input
+              type="number"
+              min="1"
+              max={totalPages}
+              value={pageInput}
+              onChange={(e) => setPageInput(e.target.value)}
+              placeholder={`1-${totalPages}`}
+              className="w-20 h-8"
+            />
+            <Button type="submit" size="sm" variant="outline">
+              Ir
+            </Button>
+          </form>
         </div>
       )}
 

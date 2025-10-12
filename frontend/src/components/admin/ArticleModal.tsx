@@ -55,8 +55,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       });
       setAuthorsInput(authorNames.join(", "));
       setPdfFile(null);
-      // Set selected event when editing
-      if (article.edition?.event?.id) {
+      // Set selected event when editing - only after events are loaded
+      if (article.edition?.event?.id && events.length > 0) {
         setSelectedEventId(article.edition.event.id);
       }
     } else {
@@ -70,7 +70,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       setPdfFile(null);
       setSelectedEventId(undefined);
     }
-  }, [article]);
+  }, [article, events]);
 
   async function loadData() {
     setLoadingEditions(true);
@@ -79,6 +79,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       setEvents(eventsData);
       setEditions(editionsData);
     } catch (err: any) {
+      console.error("Error loading modal data:", err);
       toast.error("Erro ao carregar dados");
     } finally {
       setLoadingEditions(false);
@@ -103,7 +104,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       return;
     }
 
-    if (!pdfFile) {
+    // Only require PDF for new articles, not when editing
+    if (!article && !pdfFile) {
       toast.error("Faça upload do arquivo PDF");
       return;
     }
@@ -208,24 +210,24 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
               <Select
                 value={form.edition_id?.toString() || ""}
                 onValueChange={(value) => setForm({ ...form, edition_id: value ? parseInt(value) : undefined })}
-                disabled={loading || loadingEditions || !selectedEventId}
+                disabled={loading || loadingEditions || !selectedEventId || filteredEditions.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={selectedEventId ? "Selecione uma edição" : "Selecione um evento primeiro"} />
+                  <SelectValue placeholder={
+                    !selectedEventId 
+                      ? "Selecione um evento primeiro" 
+                      : filteredEditions.length === 0 
+                        ? "Nenhuma edição encontrada para este evento"
+                        : "Selecione uma edição"
+                  } />
                 </SelectTrigger>
                 <SelectContent>
-                  {filteredEditions.length === 0 && selectedEventId ? (
-                    <SelectItem value="" disabled>
-                      Nenhuma edição encontrada para este evento
+                  {filteredEditions.map((edition) => (
+                    <SelectItem key={edition.id} value={edition.id!.toString()}>
+                      {edition.year} {edition.location && `- ${edition.location}`}
+                      {edition.start_date && ` (${new Date(edition.start_date).toLocaleDateString('pt-BR')})`}
                     </SelectItem>
-                  ) : (
-                    filteredEditions.map((edition) => (
-                      <SelectItem key={edition.id} value={edition.id!.toString()}>
-                        {edition.year} {edition.location && `- ${edition.location}`}
-                        {edition.start_date && ` (${new Date(edition.start_date).toLocaleDateString('pt-BR')})`}
-                      </SelectItem>
-                    ))
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -275,7 +277,9 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
                 )}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Faça upload do arquivo PDF do artigo
+                {article 
+                  ? "Opcional: faça upload apenas se deseja atualizar o PDF" 
+                  : "Faça upload do arquivo PDF do artigo"}
               </p>
             </div>
           </div>

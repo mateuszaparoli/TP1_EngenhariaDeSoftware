@@ -184,15 +184,14 @@ export async function createArticle(payload: ArticlePayload, pdfFile?: File): Pr
 
 export async function updateArticle(id: number, payload: Partial<ArticlePayload>, pdfFile?: File): Promise<ArticleItem> {
   const formData = new FormData();
-  if (payload.title) formData.append('title', payload.title);
+  if (payload.title !== undefined) formData.append('title', payload.title);
   if (payload.abstract !== undefined) formData.append('abstract', payload.abstract);
-  if (payload.edition_id) formData.append('edition_id', payload.edition_id.toString());
+  if (payload.edition_id !== undefined) formData.append('edition_id', payload.edition_id.toString());
   if (payload.bibtex !== undefined) formData.append('bibtex', payload.bibtex);
   if (payload.authors && payload.authors.length > 0) {
     formData.append('authors', JSON.stringify(payload.authors));
   }
   if (pdfFile) {
-    console.log('Uploading PDF file:', pdfFile.name, pdfFile.size, pdfFile.type);
     formData.append('pdf_file', pdfFile);
   }
 

@@ -271,37 +271,58 @@ class ArticleDetailView(View):
         return JsonResponse(_article_to_dict(article))
 
     def put(self, request, pk):
-        print(f"=== UPDATE ARTICLE {pk} ===")  # Debug
-        print(f"Content-Type: {request.content_type}")  # Debug
-        print(f"POST data: {request.POST}")  # Debug
-        print(f"FILES: {request.FILES}")  # Debug
+        print(f"=== UPDATE ARTICLE {pk} ===")
+        print(f"Content-Type: {request.content_type}")
+        print(f"Request method: {request.method}")
         
         article = get_object_or_404(Article, pk=pk)
+        print(f"BEFORE UPDATE - Edition: {article.edition_id}, Title: {article.title}")
 
         # Handle multipart/form-data for file uploads
+        # Django doesn't automatically parse PUT requests with multipart/form-data
         if request.content_type and 'multipart/form-data' in request.content_type:
-            if "title" in request.POST:
-                print(f"Updating title to: {request.POST['title']}")  # Debug
-                article.title = request.POST["title"]
-            if "abstract" in request.POST:
-                article.abstract = request.POST.get("abstract", "")
-            if "pdf_url" in request.POST:
-                article.pdf_url = request.POST.get("pdf_url", "")
-            if "bibtex" in request.POST:
-                article.bibtex = request.POST.get("bibtex", "")
+            from django.http import QueryDict
+            import io
+            
+            # Parse the request body manually for PUT
+            try:
+                # Use Django's MultiPartParser
+                from django.http.multipartparser import MultiPartParser
+                
+                # Parse the multipart data
+                parser = MultiPartParser(request.META, io.BytesIO(request.body), request.upload_handlers, request.encoding or 'utf-8')
+                parsed_data, parsed_files = parser.parse()
+                print(f"Parsed POST data: {dict(parsed_data)}")
+                print(f"Parsed FILES: {list(parsed_files.keys())}")
+            except Exception as e:
+                print(f"Error parsing multipart data: {e}")
+                import traceback
+                traceback.print_exc()
+                parsed_data = QueryDict()
+                parsed_files = {}
+            
+            if "title" in parsed_data:
+                print(f"Updating title to: {parsed_data['title']}")  # Debug
+                article.title = parsed_data["title"]
+            if "abstract" in parsed_data:
+                article.abstract = parsed_data.get("abstract", "")
+            if "pdf_url" in parsed_data:
+                article.pdf_url = parsed_data.get("pdf_url", "")
+            if "bibtex" in parsed_data:
+                article.bibtex = parsed_data.get("bibtex", "")
             
             # Handle edition
-            if "edition_id" in request.POST:
-                print(f"Updating edition to: {request.POST['edition_id']}")  # Debug
-                article.edition = get_object_or_404(Edition, pk=request.POST["edition_id"])
+            if "edition_id" in parsed_data:
+                print(f"Updating edition to: {parsed_data['edition_id']}")  # Debug
+                article.edition = get_object_or_404(Edition, pk=parsed_data["edition_id"])
 
             # Handle file upload
-            if 'pdf_file' in request.FILES:
-                print(f"Updating PDF file: {request.FILES['pdf_file'].name}")  # Debug
-                article.pdf_file = request.FILES['pdf_file']
+            if 'pdf_file' in parsed_files:
+                print(f"Updating PDF file: {parsed_files['pdf_file'].name}")  # Debug
+                article.pdf_file = parsed_files['pdf_file']
 
             # Handle authors
-            authors_str = request.POST.get("authors")
+            authors_str = parsed_data.get("authors")
             if authors_str:
                 print(f"Updating authors: {authors_str}")  # Debug
                 try:
@@ -317,7 +338,13 @@ class ArticleDetailView(View):
                     print(f"Error parsing authors JSON: {e}")  # Debug
 
             article.save()
+            print(f"AFTER UPDATE - Edition: {article.edition_id}, Title: {article.title}")
             print(f"Article saved successfully")  # Debug
+            
+            # Refresh the article with related data
+            article.refresh_from_db()
+            article = Article.objects.select_related("edition", "edition__event").prefetch_related("authors").get(pk=article.id)
+            
             return JsonResponse(_article_to_dict(article))
 
         # Handle JSON payload
