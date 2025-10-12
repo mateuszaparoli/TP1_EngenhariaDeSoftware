@@ -6,18 +6,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, FileText, Check, X, AlertCircle } from "lucide-react";
-import { getEvents, bulkImportArticles, EventItem, BulkImportPayload, BulkImportResponse } from "@/lib/api";
+import { getEvents, getEditions, bulkImportArticles, EventItem, EditionItem, BulkImportPayload, BulkImportResponse } from "@/lib/api";
 import { toast } from "sonner";
 
 export default function BulkImportManager(): React.JSX.Element {
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [editions, setEditions] = useState<EditionItem[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<number | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [form, setForm] = useState<BulkImportPayload>({
-    event_name: "",
-    year: new Date().getFullYear(),
+  const [form, setForm] = useState({
+    edition_id: undefined as number | undefined,
     bibtex_content: "",
   });
   const [bibtexFile, setBibtexFile] = useState<File | null>(null);
@@ -25,22 +26,28 @@ export default function BulkImportManager(): React.JSX.Element {
   const [importResult, setImportResult] = useState<BulkImportResponse | null>(null);
 
   useEffect(() => {
-    loadEvents();
+    loadData();
   }, []);
 
-  async function loadEvents() {
+  async function loadData() {
     setLoading(true);
     setError(null);
     try {
-      const eventsData = await getEvents();
+      const [eventsData, editionsData] = await Promise.all([getEvents(), getEditions()]);
       setEvents(eventsData);
+      setEditions(editionsData);
     } catch (err: any) {
-      setError(err.message || "Erro ao carregar eventos");
-      toast.error("Erro ao carregar eventos");
+      setError(err.message || "Erro ao carregar dados");
+      toast.error("Erro ao carregar dados");
     } finally {
       setLoading(false);
     }
   }
+
+  // Filter editions by selected event
+  const filteredEditions = selectedEventId 
+    ? editions.filter(edition => edition.event?.id === selectedEventId)
+    : [];
 
   function handleBibtexFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
@@ -69,9 +76,17 @@ export default function BulkImportManager(): React.JSX.Element {
     setError(null);
     setImportResult(null);
 
-    if (!form.event_name || !form.year) {
-      setError("Nome do evento e ano são obrigatórios");
-      toast.error("Nome do evento e ano são obrigatórios");
+    // Validate that an existing edition is selected
+    if (!form.edition_id) {
+      setError("Selecione uma edição existente");
+      toast.error("Selecione uma edição existente");
+      return;
+    }
+
+    const selectedEdition = editions.find(ed => ed.id === form.edition_id);
+    if (!selectedEdition) {
+      setError("Edição selecionada não encontrada");
+      toast.error("Edição selecionada não encontrada");
       return;
     }
 
@@ -83,7 +98,13 @@ export default function BulkImportManager(): React.JSX.Element {
 
     setImporting(true);
     try {
-      const result = await bulkImportArticles(form, bibtexFile || undefined, pdfZipFile || undefined);
+      // Use existing edition - send edition_id instead of event_name + year
+      const payload: BulkImportPayload = {
+        edition_id: form.edition_id,
+        bibtex_content: form.bibtex_content,
+      };
+
+      const result = await bulkImportArticles(payload, bibtexFile || undefined, pdfZipFile || undefined);
       setImportResult(result);
       
       if (result.success) {
@@ -92,10 +113,10 @@ export default function BulkImportManager(): React.JSX.Element {
         toast.success(`${result.created_count} artigos importados com sucesso!${pdfMessage}${skipMessage}`);
         // Reset form
         setForm({
-          event_name: "",
-          year: new Date().getFullYear(),
+          edition_id: undefined,
           bibtex_content: "",
         });
+        setSelectedEventId(undefined);
         setBibtexFile(null);
         setPdfZipFile(null);
       }
@@ -117,52 +138,67 @@ export default function BulkImportManager(): React.JSX.Element {
         <CardHeader>
           <CardTitle>Importar Artigos via BibTeX</CardTitle>
           <CardDescription>
-            Importe múltiplos artigos de uma só vez usando um arquivo BibTeX ou colando o conteúdo diretamente.
+            Importe múltiplos artigos de uma só vez usando um arquivo BibTeX. Selecione uma edição existente.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="event_name">Nome do Evento *</Label>
-                <Select
-                  value={form.event_name}
-                  onValueChange={(value) => setForm({ ...form, event_name: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione um evento existente" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {events.map((event) => (
-                      <SelectItem key={event.id} value={event.name}>
-                        {event.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Ou digite um novo nome de evento
-                </p>
-                <Input
-                  placeholder="Ou digite um novo evento"
-                  value={form.event_name}
-                  onChange={(e) => setForm({ ...form, event_name: e.target.value })}
-                  className="mt-2"
-                />
-              </div>
+            <div>
+              <Label htmlFor="event_select">Selecionar Evento *</Label>
+              <Select
+                value={selectedEventId?.toString() || ""}
+                onValueChange={(value) => {
+                  const eventId = value ? parseInt(value) : undefined;
+                  setSelectedEventId(eventId);
+                  setForm({ ...form, edition_id: undefined });
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um evento existente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {events.map((event) => (
+                    <SelectItem key={event.id} value={event.id!.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <Label htmlFor="year">Ano da Edição *</Label>
-                <Input
-                  id="year"
-                  type="number"
-                  required
-                  min="1900"
-                  max="2099"
-                  value={form.year}
-                  onChange={(e) => setForm({ ...form, year: parseInt(e.target.value) || new Date().getFullYear() })}
-                />
-              </div>
+            <div>
+              <Label htmlFor="edition_select">Edição *</Label>
+              <Select
+                value={form.edition_id?.toString() || ""}
+                onValueChange={(value) => {
+                  const editionId = value ? parseInt(value) : undefined;
+                  setForm({ ...form, edition_id: editionId });
+                }}
+                disabled={!selectedEventId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={selectedEventId ? "Selecione uma edição" : "Selecione um evento primeiro"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {filteredEditions.length === 0 && selectedEventId ? (
+                    <SelectItem value="" disabled>
+                      Nenhuma edição encontrada para este evento
+                    </SelectItem>
+                  ) : (
+                    filteredEditions.map((edition) => (
+                      <SelectItem key={edition.id} value={edition.id!.toString()}>
+                        {edition.year} {edition.location && `- ${edition.location}`}
+                        {edition.start_date && ` (${new Date(edition.start_date).toLocaleDateString('pt-BR')})`}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              {selectedEventId && filteredEditions.length === 0 && (
+                <p className="text-xs text-muted-foreground mt-1 text-orange-600">
+                  Nenhuma edição encontrada. Crie uma edição primeiro na aba "Edições".
+                </p>
+              )}
             </div>
 
             <div>
@@ -238,7 +274,7 @@ export default function BulkImportManager(): React.JSX.Element {
             </div>
 
             <div className="flex gap-2">
-              <Button type="submit" disabled={importing} className="flex items-center gap-2">
+              <Button type="submit" disabled={importing || !form.edition_id} className="flex items-center gap-2">
                 {importing ? (
                   <>
                     <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />

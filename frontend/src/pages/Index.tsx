@@ -161,53 +161,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Events Section */}
-      <section className="py-16 bg-background/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Browse Events</h2>
-            <p className="text-muted-foreground text-lg">
-              Explore scientific events and their published papers
-            </p>
-          </div>
-          
-          {loadingEvents ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">Loading events...</p>
-            </div>
-          ) : events.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground">No events available yet.</p>
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {events.map((event) => (
-                <Card key={event.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
-                  <Link to={`/${getEventSlug(event)}`}>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2 group-hover:text-primary transition-colors">
-                        <Calendar className="w-5 h-5" />
-                        {event.name}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {event.description && (
-                        <p className="text-muted-foreground mb-4 line-clamp-3">
-                          {event.description}
-                        </p>
-                      )}
-                      <p className="text-sm text-blue-600 group-hover:text-blue-800 transition-colors">
-                        View editions and papers →
-                      </p>
-                    </CardContent>
-                  </Link>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-8 border-t border-border bg-background">
         <div className="container mx-auto px-4">

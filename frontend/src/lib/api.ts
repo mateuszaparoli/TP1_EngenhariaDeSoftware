@@ -78,8 +78,9 @@ export type BulkImportResponse = {
 };
 
 export type BulkImportPayload = {
-  event_name: string;
-  year: number;
+  edition_id?: number;
+  event_name?: string;  // Keep for backward compatibility
+  year?: number;        // Keep for backward compatibility
   bibtex_content?: string;
 };
 
@@ -229,8 +230,14 @@ export async function listSubscriptions(): Promise<any[]> {
 
 export async function bulkImportArticles(payload: BulkImportPayload, bibtexFile?: File, pdfZipFile?: File): Promise<BulkImportResponse> {
   const formData = new FormData();
-  formData.append('event_name', payload.event_name);
-  formData.append('year', payload.year.toString());
+  
+  // Use edition_id if provided, otherwise fall back to event_name + year
+  if (payload.edition_id) {
+    formData.append('edition_id', payload.edition_id.toString());
+  } else if (payload.event_name && payload.year) {
+    formData.append('event_name', payload.event_name);
+    formData.append('year', payload.year.toString());
+  }
   
   if (bibtexFile) {
     formData.append('bibtex_file', bibtexFile);

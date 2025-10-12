@@ -508,16 +508,31 @@ class BulkImportArticlesView(View):
             if not bibtex_content:
                 return JsonResponse({"error": "No BibTeX content provided"}, status=400)
             
-            # Get edition info
-            event_name = request.POST.get('event_name') or (json.loads(request.body.decode() or "{}")).get('event_name')
-            year = request.POST.get('year') or (json.loads(request.body.decode() or "{}")).get('year')
+            # Get edition info - now we expect edition_id from frontend
+            edition_id = request.POST.get('edition_id') or (json.loads(request.body.decode() or "{}")).get('edition_id')
             
-            if not event_name or not year:
-                return JsonResponse({"error": "event_name and year are required"}, status=400)
-            
-            # Get or create event and edition
-            event, _ = Event.objects.get_or_create(name=event_name)
-            edition, _ = Edition.objects.get_or_create(event=event, year=int(year))
+            if edition_id:
+                # Use specific edition selected in frontend
+                try:
+                    edition = Edition.objects.get(pk=int(edition_id))
+                except Edition.DoesNotExist:
+                    return JsonResponse({"error": "Selected edition not found"}, status=400)
+            else:
+                # Fallback to old behavior for backward compatibility
+                event_name = request.POST.get('event_name') or (json.loads(request.body.decode() or "{}")).get('event_name')
+                year = request.POST.get('year') or (json.loads(request.body.decode() or "{}")).get('year')
+                
+                if not event_name or not year:
+                    return JsonResponse({"error": "edition_id or (event_name and year) are required"}, status=400)
+                
+                # Get or create event and edition
+                event, _ = Event.objects.get_or_create(name=event_name)
+                try:
+                    edition = Edition.objects.get(event=event, year=int(year))
+                except Edition.DoesNotExist:
+                    return JsonResponse({"error": f"No edition found for {event_name} {year}. Please create the edition first."}, status=400)
+                except Edition.MultipleObjectsReturned:
+                    return JsonResponse({"error": f"Multiple editions found for {event_name} {year}. Please specify edition_id."}, status=400)
             
             # Handle ZIP file with PDFs
             pdf_files = {}

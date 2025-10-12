@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { getEditions, createArticle, updateArticle, EditionItem, ArticleItem, ArticlePayload } from "@/lib/api";
+import { getEditions, getEvents, createArticle, updateArticle, EditionItem, ArticleItem, ArticlePayload, EventItem } from "@/lib/api";
 import { FileText } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,7 +24,9 @@ interface ArticleModalProps {
 }
 
 export default function ArticleModal({ isOpen, onClose, onSuccess, article }: ArticleModalProps) {
+  const [events, setEvents] = useState<EventItem[]>([]);
   const [editions, setEditions] = useState<EditionItem[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<number | undefined>(undefined);
   const [form, setForm] = useState<ArticlePayload>({
     title: "",
     abstract: "",
@@ -40,7 +42,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
 
   useEffect(() => {
     if (isOpen) {
-      loadEditions();
+      loadData();
     }
   }, [isOpen]);
 
@@ -57,6 +59,10 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       });
       setAuthorsInput(authorNames.join(", "));
       setPdfFile(null);
+      // Set selected event when editing
+      if (article.edition?.event?.id) {
+        setSelectedEventId(article.edition.event.id);
+      }
     } else {
       setForm({
         title: "",
@@ -68,20 +74,27 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       });
       setAuthorsInput("");
       setPdfFile(null);
+      setSelectedEventId(undefined);
     }
   }, [article]);
 
-  async function loadEditions() {
+  async function loadData() {
     setLoadingEditions(true);
     try {
-      const editionsData = await getEditions();
+      const [eventsData, editionsData] = await Promise.all([getEvents(), getEditions()]);
+      setEvents(eventsData);
       setEditions(editionsData);
     } catch (err: any) {
-      toast.error("Erro ao carregar edições");
+      toast.error("Erro ao carregar dados");
     } finally {
       setLoadingEditions(false);
     }
   }
+
+  // Filter editions by selected event
+  const filteredEditions = selectedEventId 
+    ? editions.filter(edition => edition.event?.id === selectedEventId)
+    : [];
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -165,21 +178,53 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
             </div>
 
             <div>
+              <Label htmlFor="event">Evento *</Label>
+              <Select
+                value={selectedEventId?.toString() || ""}
+                onValueChange={(value) => {
+                  const eventId = value ? parseInt(value) : undefined;
+                  setSelectedEventId(eventId);
+                  // Reset edition selection when event changes
+                  setForm({ ...form, edition_id: undefined });
+                }}
+                disabled={loading || loadingEditions}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um evento primeiro" />
+                </SelectTrigger>
+                <SelectContent>
+                  {events.map((event) => (
+                    <SelectItem key={event.id} value={event.id!.toString()}>
+                      {event.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
               <Label htmlFor="edition">Edição *</Label>
               <Select
                 value={form.edition_id?.toString() || ""}
                 onValueChange={(value) => setForm({ ...form, edition_id: value ? parseInt(value) : undefined })}
-                disabled={loading || loadingEditions}
+                disabled={loading || loadingEditions || !selectedEventId}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Selecione uma edição" />
+                  <SelectValue placeholder={selectedEventId ? "Selecione uma edição" : "Selecione um evento primeiro"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {editions.map((edition) => (
-                    <SelectItem key={edition.id} value={edition.id!.toString()}>
-                      {edition.event?.name} - {edition.year}
+                  {filteredEditions.length === 0 && selectedEventId ? (
+                    <SelectItem value="" disabled>
+                      Nenhuma edição encontrada para este evento
                     </SelectItem>
-                  ))}
+                  ) : (
+                    filteredEditions.map((edition) => (
+                      <SelectItem key={edition.id} value={edition.id!.toString()}>
+                        {edition.year} {edition.location && `- ${edition.location}`}
+                        {edition.start_date && ` (${new Date(edition.start_date).toLocaleDateString('pt-BR')})`}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
