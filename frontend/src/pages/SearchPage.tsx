@@ -222,15 +222,28 @@ export default function SearchPage() {
 
                       {/* Event and Year */}
                       {article.edition && (
-                        <div className="flex items-center gap-2 mb-2">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">
-                            {article.edition.event?.name} {article.edition.year}
-                          </span>
+                        <div className="flex flex-col gap-1 mb-2">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-sm font-medium text-foreground">
+                              {article.edition.event?.name}
+                              {article.edition.event?.sigla && ` (${article.edition.event.sigla})`}
+                              {' '}- {article.edition.year}
+                            </span>
+                          </div>
+                          {article.edition.event?.entidade_promotora && (
+                            <div className="flex items-center gap-2 ml-6">
+                              <span className="text-xs text-muted-foreground">
+                                {article.edition.event.entidade_promotora}
+                              </span>
+                            </div>
+                          )}
                           {article.edition.location && (
-                            <Badge variant="secondary" className="text-xs">
-                              {article.edition.location}
-                            </Badge>
+                            <div className="flex items-center gap-2 ml-6">
+                              <Badge variant="secondary" className="text-xs">
+                                {article.edition.location}
+                              </Badge>
+                            </div>
                           )}
                         </div>
                       )}

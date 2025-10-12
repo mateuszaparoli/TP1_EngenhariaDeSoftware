@@ -90,14 +90,15 @@ export default function EventsManager(): React.JSX.Element {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead>Sigla</TableHead>
+                <TableHead>Entidade Promotora</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {events.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
                     Nenhum evento cadastrado
                   </TableCell>
                 </TableRow>
@@ -112,7 +113,8 @@ export default function EventsManager(): React.JSX.Element {
                         {ev.name}
                       </Link>
                     </TableCell>
-                    <TableCell>{ev.description}</TableCell>
+                    <TableCell>{ev.sigla}</TableCell>
+                    <TableCell>{ev.entidade_promotora}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button

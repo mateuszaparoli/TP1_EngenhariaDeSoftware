@@ -175,6 +175,21 @@ export default function EditionPage() {
             {event.name} - {edition.year}
           </h1>
           
+          {(event.sigla || event.entidade_promotora) && (
+            <div className="mb-4 space-y-1">
+              {event.sigla && (
+                <p className="text-lg font-semibold text-blue-700">
+                  Sigla: {event.sigla}
+                </p>
+              )}
+              {event.entidade_promotora && (
+                <p className="text-md text-slate-600">
+                  <span className="font-medium">Entidade Promotora:</span> {event.entidade_promotora}
+                </p>
+              )}
+            </div>
+          )}
+          
           <div className="flex flex-wrap gap-4 text-slate-600">
             {edition.location && (
               <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full">

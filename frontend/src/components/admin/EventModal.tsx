@@ -22,14 +22,14 @@ interface EventModalProps {
 }
 
 export default function EventModal({ isOpen, onClose, onSuccess, event }: EventModalProps) {
-  const [form, setForm] = useState<EventItem>({ name: "", description: "" });
+  const [form, setForm] = useState<EventItem>({ name: "", sigla: "", entidade_promotora: "" });
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (event) {
       setForm({ ...event });
     } else {
-      setForm({ name: "", description: "" });
+      setForm({ name: "", sigla: "", entidade_promotora: "" });
     }
   }, [event]);
 
@@ -89,14 +89,24 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
               />
             </div>
             <div>
-              <Label htmlFor="description" className="text-slate-700 font-medium">Descrição</Label>
-              <Textarea
-                id="description"
-                placeholder="Descrição do evento..."
-                value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
+              <Label htmlFor="sigla" className="text-slate-700 font-medium">Sigla</Label>
+              <Input
+                id="sigla"
+                placeholder="Ex: SBES"
+                value={form.sigla}
+                onChange={(e) => setForm({ ...form, sigla: e.target.value })}
                 disabled={loading}
-                rows={3}
+                className="focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <Label htmlFor="entidade_promotora" className="text-slate-700 font-medium">Entidade Promotora</Label>
+              <Input
+                id="entidade_promotora"
+                placeholder="Ex: Sociedade Brasileira de Computação"
+                value={form.entidade_promotora}
+                onChange={(e) => setForm({ ...form, entidade_promotora: e.target.value })}
+                disabled={loading}
                 className="focus:ring-blue-500 focus:border-blue-500"
               />
             </div>

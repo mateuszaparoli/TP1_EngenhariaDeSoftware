@@ -160,9 +160,18 @@ export default function EventPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8 pb-6 border-b border-blue-100">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">{event.name}</h1>
-          {event.description && (
-            <p className="text-slate-600 text-lg">{event.description}</p>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
+            {event.name}
+          </h1>
+          {event.sigla && (
+            <p className="text-lg font-semibold text-blue-700 mb-2">
+              Sigla: {event.sigla}
+            </p>
+          )}
+          {event.entidade_promotora && (
+            <p className="text-md text-slate-600 mb-2">
+              <span className="font-medium">Entidade Promotora:</span> {event.entidade_promotora}
+            </p>
           )}
         </div>
 

@@ -27,11 +27,13 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
   const [events, setEvents] = useState<EventItem[]>([]);
   const [editions, setEditions] = useState<EditionItem[]>([]);
   const [selectedEventId, setSelectedEventId] = useState<number | undefined>(undefined);
-  const [form, setForm] = useState<ArticlePayload>({
+  const [form, setForm] = useState<ArticlePayload & { pagina_inicial?: number; pagina_final?: number }>({
     title: "",
     abstract: "",
     edition_id: undefined,
     authors: [],
+    pagina_inicial: undefined,
+    pagina_final: undefined,
   });
   const [authorsInput, setAuthorsInput] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -52,6 +54,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
         abstract: article.abstract || "",
         edition_id: article.edition?.id,
         authors: authorNames,
+        pagina_inicial: article.pagina_inicial,
+        pagina_final: article.pagina_final,
       });
       setAuthorsInput(authorNames.join(", "));
       setPdfFile(null);
@@ -65,6 +69,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
         abstract: "",
         edition_id: undefined,
         authors: [],
+        pagina_inicial: undefined,
+        pagina_final: undefined,
       });
       setAuthorsInput("");
       setPdfFile(null);
@@ -123,6 +129,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
         abstract: form.abstract,
         edition_id: form.edition_id,
         authors: authors,
+        pagina_inicial: form.pagina_inicial,
+        pagina_final: form.pagina_final,
       };
 
       if (article && article.id) {
@@ -256,6 +264,31 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
                 onChange={(e) => setForm({ ...form, abstract: e.target.value })}
                 disabled={loading}
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="pagina_inicial">Página Inicial</Label>
+                <Input
+                  id="pagina_inicial"
+                  type="number"
+                  placeholder="Ex: 1"
+                  value={form.pagina_inicial ?? ""}
+                  onChange={(e) => setForm({ ...form, pagina_inicial: e.target.value ? parseInt(e.target.value) : undefined })}
+                  disabled={loading}
+                />
+              </div>
+              <div>
+                <Label htmlFor="pagina_final">Página Final</Label>
+                <Input
+                  id="pagina_final"
+                  type="number"
+                  placeholder="Ex: 10"
+                  value={form.pagina_final ?? ""}
+                  onChange={(e) => setForm({ ...form, pagina_final: e.target.value ? parseInt(e.target.value) : undefined })}
+                  disabled={loading}
+                />
+              </div>
             </div>
 
             <div>

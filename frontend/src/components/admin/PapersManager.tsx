@@ -151,6 +151,8 @@ export default function PapersManager(): React.JSX.Element {
                 <TableHead>Título</TableHead>
                 <TableHead>Autores</TableHead>
                 <TableHead>Edição</TableHead>
+                <TableHead>Página Inicial</TableHead>
+                <TableHead>Página Final</TableHead>
                 <TableHead>PDF</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -158,7 +160,7 @@ export default function PapersManager(): React.JSX.Element {
             <TableBody>
               {articles.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
                     Nenhum artigo cadastrado
                   </TableCell>
                 </TableRow>
@@ -175,6 +177,12 @@ export default function PapersManager(): React.JSX.Element {
                       {article.edition
                         ? `${article.edition.event?.name} ${article.edition.year}`
                         : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {article.pagina_inicial ?? "-"}
+                    </TableCell>
+                    <TableCell>
+                      {article.pagina_final ?? "-"}
                     </TableCell>
                     <TableCell>
                       {article.pdf_url ? (

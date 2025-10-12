@@ -3,14 +3,15 @@ const API_URL = 'http://localhost:8000';
 export type EventItem = {
   id?: number;
   name: string;
-  description?: string;
+  sigla?: string;
+  entidade_promotora?: string;
 };
 
 export type EditionItem = {
   id?: number;
   event_id?: number;
   event_name?: string;
-  event?: { id: number; name: string };
+  event?: EventItem;
   year: number;
   location?: string;
   start_date?: string;
@@ -34,6 +35,8 @@ export type ArticleItem = {
   start_page?: string;
   end_page?: string;
   bibtex?: string;
+  pagina_inicial?: number;
+  pagina_final?: number;
   created_at?: string;
 };
 
@@ -43,6 +46,8 @@ export type ArticlePayload = {
   edition_id?: number;
   authors?: string[];  // For sending data to backend (just names)
   bibtex?: string;
+  pagina_inicial?: number;
+  pagina_final?: number;
 };
 
 export type BulkImportResponse = {
@@ -167,6 +172,8 @@ export async function createArticle(payload: ArticlePayload, pdfFile?: File): Pr
   if (payload.abstract) formData.append('abstract', payload.abstract);
   if (payload.edition_id) formData.append('edition_id', payload.edition_id.toString());
   if (payload.bibtex) formData.append('bibtex', payload.bibtex);
+  if (payload.pagina_inicial !== undefined) formData.append('pagina_inicial', payload.pagina_inicial.toString());
+  if (payload.pagina_final !== undefined) formData.append('pagina_final', payload.pagina_final.toString());
   if (payload.authors && payload.authors.length > 0) {
     formData.append('authors', JSON.stringify(payload.authors));
   }
@@ -188,6 +195,8 @@ export async function updateArticle(id: number, payload: Partial<ArticlePayload>
   if (payload.abstract !== undefined) formData.append('abstract', payload.abstract);
   if (payload.edition_id !== undefined) formData.append('edition_id', payload.edition_id.toString());
   if (payload.bibtex !== undefined) formData.append('bibtex', payload.bibtex);
+  if (payload.pagina_inicial !== undefined) formData.append('pagina_inicial', payload.pagina_inicial.toString());
+  if (payload.pagina_final !== undefined) formData.append('pagina_final', payload.pagina_final.toString());
   if (payload.authors && payload.authors.length > 0) {
     formData.append('authors', JSON.stringify(payload.authors));
   }
