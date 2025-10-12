@@ -545,16 +545,28 @@ class BulkImportArticlesView(View):
             if 'bibtex_file' in request.FILES:
                 # Handle file upload
                 bibtex_content = request.FILES['bibtex_file'].read().decode('utf-8')
+            elif request.POST.get('bibtex_content'):
+                # Handle FormData with bibtex_content as text field
+                bibtex_content = request.POST.get('bibtex_content')
             else:
-                # Handle JSON payload with bibtex content
-                payload = json.loads(request.body.decode() or "{}")
-                bibtex_content = payload.get('bibtex_content', '')
+                # Handle JSON payload with bibtex content (fallback for backward compatibility)
+                try:
+                    payload = json.loads(request.body.decode() or "{}")
+                    bibtex_content = payload.get('bibtex_content', '')
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    bibtex_content = ''
                 
             if not bibtex_content:
                 return JsonResponse({"error": "No BibTeX content provided"}, status=400)
             
             # Get edition info - now we expect edition_id from frontend
-            edition_id = request.POST.get('edition_id') or (json.loads(request.body.decode() or "{}")).get('edition_id')
+            edition_id = request.POST.get('edition_id')
+            if not edition_id:
+                try:
+                    payload = json.loads(request.body.decode() or "{}")
+                    edition_id = payload.get('edition_id')
+                except (json.JSONDecodeError, UnicodeDecodeError):
+                    pass
             
             if edition_id:
                 # Use specific edition selected in frontend
@@ -564,8 +576,16 @@ class BulkImportArticlesView(View):
                     return JsonResponse({"error": "Selected edition not found"}, status=400)
             else:
                 # Fallback to old behavior for backward compatibility
-                event_name = request.POST.get('event_name') or (json.loads(request.body.decode() or "{}")).get('event_name')
-                year = request.POST.get('year') or (json.loads(request.body.decode() or "{}")).get('year')
+                event_name = request.POST.get('event_name')
+                year = request.POST.get('year')
+                
+                if not event_name or not year:
+                    try:
+                        payload = json.loads(request.body.decode() or "{}")
+                        event_name = payload.get('event_name')
+                        year = payload.get('year')
+                    except (json.JSONDecodeError, UnicodeDecodeError):
+                        pass
                 
                 if not event_name or not year:
                     return JsonResponse({"error": "edition_id or (event_name and year) are required"}, status=400)
@@ -616,8 +636,8 @@ class BulkImportArticlesView(View):
                     # Try to match PDF file from ZIP
                     pdf_file = self._find_matching_pdf(article_data, pdf_files)
                     if pdf_file:
-                        article.pdf_file = pdf_file
-                        article.save()
+                        # Use the save method of FileField to properly save the file
+                        article.pdf_file.save(pdf_file['name'], pdf_file['content'], save=True)
                     
                     # Add authors
                     authors = article_data.get('authors', [])
@@ -741,7 +761,6 @@ class BulkImportArticlesView(View):
     def _extract_pdfs_from_zip(self, zip_file):
         """Extract PDF files from uploaded ZIP"""
         import zipfile
-        import tempfile
         import os
         from django.core.files.base import ContentFile
         
@@ -753,13 +772,21 @@ class BulkImportArticlesView(View):
                     if file_info.filename.lower().endswith('.pdf'):
                         # Extract PDF content
                         pdf_content = zip_ref.read(file_info.filename)
-                        # Create a ContentFile for Django
+                        # Get just the filename without path
                         filename = os.path.basename(file_info.filename)
-                        pdf_files[filename.lower()] = ContentFile(pdf_content, name=filename)
                         
-                        # Also try without extension for matching
+                        # Store as dict with content and name
+                        pdf_data = {
+                            'content': ContentFile(pdf_content, name=filename),
+                            'name': filename
+                        }
+                        
+                        # Store with full filename (e.g., "sbes-paper1.pdf")
+                        pdf_files[filename.lower()] = pdf_data
+                        
+                        # Also store without extension for matching (e.g., "sbes-paper1")
                         name_without_ext = os.path.splitext(filename)[0].lower()
-                        pdf_files[name_without_ext] = ContentFile(pdf_content, name=filename)
+                        pdf_files[name_without_ext] = pdf_data
                         
         except Exception as e:
             print(f"Error extracting ZIP: {e}")
