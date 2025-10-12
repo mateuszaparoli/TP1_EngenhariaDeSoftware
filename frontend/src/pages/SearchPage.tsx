@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, BookOpen, FileText, Users, Calendar, ArrowLeft, ExternalLink } from "lucide-react";
 import { getArticles, ArticleItem } from "@/lib/api";
+import { authorNameToSlug } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function SearchPage() {
@@ -89,6 +90,11 @@ export default function SearchPage() {
       default:
         return "Search papers...";
     }
+  };
+
+  const handleAuthorClick = (authorName: string) => {
+    const slug = authorNameToSlug(authorName);
+    navigate(`/authors/${slug}`);
   };
 
   const currentQuery = searchParams.get('q');
@@ -196,9 +202,21 @@ export default function SearchPage() {
                       {article.authors && article.authors.length > 0 && (
                         <div className="flex items-center gap-2 mb-2">
                           <Users className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-muted-foreground">
-                            {article.authors.map(author => author.name).join(', ')}
-                          </span>
+                          <div className="flex flex-wrap gap-1">
+                            {article.authors.map((author, index) => (
+                              <span key={author.id} className="text-sm">
+                                <button
+                                  onClick={() => handleAuthorClick(author.name)}
+                                  className="text-primary hover:text-primary/80 hover:underline transition-colors"
+                                >
+                                  {author.name}
+                                </button>
+                                {index < article.authors.length - 1 && (
+                                  <span className="text-muted-foreground">, </span>
+                                )}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
 

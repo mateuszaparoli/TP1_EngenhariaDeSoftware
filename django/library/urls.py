@@ -17,6 +17,7 @@ urlpatterns = [
 
     # Authors (articles by author)
     path('authors/<int:pk>/articles/', views.AuthorArticlesView.as_view(), name='author-articles'),
+    path('authors/<str:author_name>/', views.AuthorByNameView.as_view(), name='author-by-name'),
 
     # Subscriptions
     path('subscriptions/', views.SubscriptionListView.as_view(), name='subscription-list'),

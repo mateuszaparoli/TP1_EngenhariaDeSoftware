@@ -83,6 +83,13 @@ export type BulkImportPayload = {
   bibtex_content?: string;
 };
 
+export type AuthorPageData = {
+  author: AuthorItem;
+  total_articles: number;
+  years: number[];
+  articles_by_year: Record<number, ArticleItem[]>;
+};
+
 async function handleRes(res: Response) {
   const text = await res.text();
   const json = text ? JSON.parse(text) : null;
@@ -246,5 +253,10 @@ export async function bulkImportArticles(payload: BulkImportPayload, bibtexFile?
     method: 'POST',
     body: formData,
   });
+  return handleRes(res);
+}
+
+export async function getAuthorByName(authorName: string): Promise<AuthorPageData> {
+  const res = await fetch(`${API_URL}/api/authors/${authorName}/`);
   return handleRes(res);
 }

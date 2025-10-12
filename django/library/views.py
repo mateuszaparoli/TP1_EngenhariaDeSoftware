@@ -351,66 +351,6 @@ class ArticleDetailView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ArticleDetailView(View):
-    def get(self, request, pk):
-        a = get_object_or_404(Article.objects.select_related('edition', 'edition__event').prefetch_related('authors'), pk=pk)
-        return JsonResponse(_article_to_dict(a))
-
-    def put(self, request, pk):
-        a = get_object_or_404(Article, pk=pk)
-        # accept json or multipart
-        if request.content_type and request.content_type.startswith('application/json'):
-            try:
-                payload = json.loads(request.body.decode() or "{}")
-            except json.JSONDecodeError:
-                return JsonResponse({"error": "invalid json"}, status=400)
-            file_obj = None
-        else:
-            payload = request.POST.dict()
-            file_obj = request.FILES.get('pdf_file')
-
-        if 'title' in payload:
-            a.title = payload.get('title')
-        if 'abstract' in payload:
-            a.abstract = payload.get('abstract', '')
-        if 'pdf_url' in payload:
-            a.pdf_url = payload.get('pdf_url', '')
-        if file_obj:
-            a.pdf_file = file_obj
-        # edition handling
-        if 'edition_id' in payload and payload.get('edition_id'):
-            a.edition = get_object_or_404(Edition, pk=payload.get('edition_id'))
-        elif 'event_name' in payload and 'year' in payload:
-            ev, _ = Event.objects.get_or_create(name=payload.get('event_name'))
-            ed, _ = Edition.objects.get_or_create(event=ev, year=int(payload.get('year')))
-            a.edition = ed
-
-        # authors: accept list or comma/semicolon-separated string
-        authors = payload.get('authors')
-        if isinstance(authors, list):
-            names = authors
-        elif isinstance(authors, str):
-            parts = [p.strip() for p in authors.replace(';', ',').split(',')]
-            names = [p for p in parts if p]
-        else:
-            names = None
-
-        if names is not None:
-            a.authors.clear()
-            for name in names:
-                author, _ = Author.objects.get_or_create(name=name)
-                a.authors.add(author)
-
-        a.save()
-        return JsonResponse(_article_to_dict(a))
-
-    def delete(self, request, pk):
-        a = get_object_or_404(Article, pk=pk)
-        a.delete()
-        return JsonResponse({}, status=204)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
 class AuthorArticlesView(View):
     def get(self, request, pk):
         author = get_object_or_404(Author, pk=pk)
@@ -421,6 +361,46 @@ class AuthorArticlesView(View):
             year = art.edition.year
             grouped.setdefault(year, []).append(_article_to_dict(art))
         return JsonResponse(grouped)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class AuthorByNameView(View):
+    def get(self, request, author_name):
+        """Get author and their articles by name slug"""
+        # Convert slug back to name (replace hyphens with spaces)
+        name = author_name.replace('-', ' ')
+        
+        try:
+            # Try exact match first
+            author = Author.objects.get(name__iexact=name)
+        except Author.DoesNotExist:
+            # Try partial match if exact doesn't work
+            authors = Author.objects.filter(name__icontains=name)
+            if not authors.exists():
+                return JsonResponse({"error": "Author not found"}, status=404)
+            author = authors.first()  # Take the first match
+        
+        # Get articles grouped by year
+        qs = author.articles.select_related('edition', 'edition__event').all().order_by('-edition__year')
+        
+        grouped_by_year = {}
+        total_articles = 0
+        
+        for article in qs:
+            year = article.edition.year
+            if year not in grouped_by_year:
+                grouped_by_year[year] = []
+            grouped_by_year[year].append(_article_to_dict(article))
+            total_articles += 1
+        
+        # Sort years in descending order
+        sorted_years = sorted(grouped_by_year.keys(), reverse=True)
+        
+        return JsonResponse({
+            "author": _author_to_dict(author),
+            "total_articles": total_articles,
+            "years": sorted_years,
+            "articles_by_year": grouped_by_year
+        })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
