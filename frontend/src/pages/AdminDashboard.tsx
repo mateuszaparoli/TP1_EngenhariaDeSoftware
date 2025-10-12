@@ -6,6 +6,7 @@ import { LogOut, Plus } from "lucide-react";
 import { toast } from "sonner";
 import EventsManager from "@/components/admin/EventsManager";
 import PapersManager from "@/components/admin/PapersManager";
+import BulkImportManager from "@/components/admin/BulkImportManager";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -50,9 +51,10 @@ const AdminDashboard = () => {
 
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="events" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-lg grid-cols-3">
             <TabsTrigger value="events">Events & Editions</TabsTrigger>
             <TabsTrigger value="papers">Papers</TabsTrigger>
+            <TabsTrigger value="bulk-import">Bulk Import</TabsTrigger>
           </TabsList>
 
           <TabsContent value="events" className="space-y-4">
@@ -61,6 +63,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="papers" className="space-y-4">
             <PapersManager />
+          </TabsContent>
+
+          <TabsContent value="bulk-import" className="space-y-4">
+            <BulkImportManager />
           </TabsContent>
         </Tabs>
       </main>

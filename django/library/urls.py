@@ -13,6 +13,7 @@ urlpatterns = [
     # Articles
     path('articles/', views.ArticleListCreateAPIView.as_view(), name='article-list-create'),
     path('articles/<int:pk>/', views.ArticleDetailView.as_view(), name='article-detail'),
+    path('articles/bulk-import/', views.BulkImportArticlesView.as_view(), name='bulk-import-articles'),
 
     # Authors (articles by author)
     path('authors/<int:pk>/articles/', views.AuthorArticlesView.as_view(), name='author-articles'),

@@ -44,6 +44,45 @@ export type ArticlePayload = {
   bibtex?: string;
 };
 
+export type BulkImportResponse = {
+  success: boolean;
+  created_count: number;
+  skipped_count: number;
+  error_count: number;
+  articles: ArticleItem[];
+  skipped_articles: {
+    title: string;
+    reason: string;
+    missing_fields: string[];
+  }[];
+  processing_errors: {
+    title: string;
+    reason: string;
+  }[];
+  report: {
+    summary: {
+      total_entries_processed: number;
+      successful_imports: number;
+      skipped_entries: number;
+      processing_errors: number;
+      success_rate: number;
+      pdf_files_in_zip: number;
+      pdfs_successfully_matched: number;
+    };
+    details: {
+      skipped_breakdown: Record<string, number>;
+      most_common_skip_reasons: [string, number][];
+    };
+  };
+  pdf_matches?: number;
+};
+
+export type BulkImportPayload = {
+  event_name: string;
+  year: number;
+  bibtex_content?: string;
+};
+
 async function handleRes(res: Response) {
   const text = await res.text();
   const json = text ? JSON.parse(text) : null;
@@ -178,5 +217,34 @@ export async function createSubscription(payload: { email: string; author?: numb
 
 export async function listSubscriptions(): Promise<any[]> {
   const res = await fetch(`${API_URL}/api/subscriptions/`);
+  return handleRes(res);
+}
+
+export async function bulkImportArticles(payload: BulkImportPayload, bibtexFile?: File, pdfZipFile?: File): Promise<BulkImportResponse> {
+  const formData = new FormData();
+  formData.append('event_name', payload.event_name);
+  formData.append('year', payload.year.toString());
+  
+  if (bibtexFile) {
+    formData.append('bibtex_file', bibtexFile);
+  } else if (payload.bibtex_content) {
+    // If no file but content is provided, send as JSON
+    const res = await fetch(`${API_URL}/api/articles/bulk-import/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    return handleRes(res);
+  }
+
+  // Add PDF ZIP file if provided
+  if (pdfZipFile) {
+    formData.append('pdf_zip', pdfZipFile);
+  }
+
+  const res = await fetch(`${API_URL}/api/articles/bulk-import/`, {
+    method: 'POST',
+    body: formData,
+  });
   return handleRes(res);
 }
