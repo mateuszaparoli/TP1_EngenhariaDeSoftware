@@ -63,11 +63,11 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>
+        <DialogHeader className="border-b border-blue-100 pb-4">
+          <DialogTitle className="text-2xl bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             {event ? "Editar Evento" : "Criar Novo Evento"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-600">
             {event 
               ? "Faça as alterações necessárias no evento." 
               : "Preencha os dados para criar um novo evento."
@@ -77,7 +77,7 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
             <div>
-              <Label htmlFor="name">Nome do Evento</Label>
+              <Label htmlFor="name" className="text-slate-700 font-medium">Nome do Evento</Label>
               <Input
                 id="name"
                 required
@@ -85,10 +85,11 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 disabled={loading}
+                className="focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             <div>
-              <Label htmlFor="description">Descrição</Label>
+              <Label htmlFor="description" className="text-slate-700 font-medium">Descrição</Label>
               <Textarea
                 id="description"
                 placeholder="Descrição do evento..."
@@ -96,14 +97,15 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
                 disabled={loading}
                 rows={3}
+                className="focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
+          <DialogFooter className="border-t border-blue-50 pt-4 mt-2">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={loading} className="hover:bg-slate-50">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
               {loading ? "Salvando..." : (event ? "Salvar" : "Criar")}
             </Button>
           </DialogFooter>

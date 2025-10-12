@@ -115,11 +115,11 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle>
+        <DialogHeader className="border-b border-blue-100 pb-4">
+          <DialogTitle className="text-2xl bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
             {edition ? "Editar Edição" : "Criar Nova Edição"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-slate-600">
             {edition 
               ? "Faça as alterações necessárias na edição." 
               : "Preencha os dados para criar uma nova edição de evento."
@@ -129,13 +129,13 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
             <div>
-              <Label htmlFor="event">Evento</Label>
+              <Label htmlFor="event" className="text-slate-700 font-medium">Evento</Label>
               <Select
                 value={form.event_id?.toString() || ""}
                 onValueChange={(value) => setForm({ ...form, event_id: parseInt(value) })}
                 disabled={loading || loadingEvents}
               >
-                <SelectTrigger>
+                <SelectTrigger className="focus:ring-blue-500 focus:border-blue-500">
                   <SelectValue placeholder="Selecione um evento" />
                 </SelectTrigger>
                 <SelectContent>
@@ -149,7 +149,7 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
             </div>
 
             <div>
-              <Label htmlFor="year">Ano</Label>
+              <Label htmlFor="year" className="text-slate-700 font-medium">Ano</Label>
               <Input
                 id="year"
                 type="number"
@@ -158,49 +158,53 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
                 value={form.year}
                 onChange={(e) => setForm({ ...form, year: parseInt(e.target.value) || 0 })}
                 disabled={loading}
+                className="focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div>
-              <Label htmlFor="location">Local</Label>
+              <Label htmlFor="location" className="text-slate-700 font-medium">Local</Label>
               <Input
                 id="location"
                 placeholder="Ex: São Paulo, Brasil"
                 value={form.location}
                 onChange={(e) => setForm({ ...form, location: e.target.value })}
                 disabled={loading}
+                className="focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="start_date">Data de Início</Label>
+                <Label htmlFor="start_date" className="text-slate-700 font-medium">Data de Início</Label>
                 <Input
                   id="start_date"
                   type="date"
                   value={form.start_date}
                   onChange={(e) => setForm({ ...form, start_date: e.target.value })}
                   disabled={loading}
+                  className="focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <Label htmlFor="end_date">Data de Término</Label>
+                <Label htmlFor="end_date" className="text-slate-700 font-medium">Data de Término</Label>
                 <Input
                   id="end_date"
                   type="date"
                   value={form.end_date}
                   onChange={(e) => setForm({ ...form, end_date: e.target.value })}
                   disabled={loading}
+                  className="focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
             </div>
           </div>
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
+          <DialogFooter className="border-t border-blue-50 pt-4 mt-2">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={loading} className="hover:bg-slate-50">
               Cancelar
             </Button>
-            <Button type="submit" disabled={loading || loadingEvents}>
+            <Button type="submit" disabled={loading || loadingEvents} className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
               {loading ? "Salvando..." : (edition ? "Salvar" : "Criar")}
             </Button>
           </DialogFooter>

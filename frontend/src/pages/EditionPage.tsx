@@ -146,9 +146,9 @@ export default function EditionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
       {/* Header */}
-      <header className="border-b border-border bg-background sticky top-0 z-50">
+      <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -169,30 +169,32 @@ export default function EditionPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
+        <div className="mb-8 pb-6 border-b border-blue-100">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
             {event.name} - {edition.year}
           </h1>
           
-          <div className="flex flex-wrap gap-4 text-muted-foreground">
+          <div className="flex flex-wrap gap-4 text-slate-600">
             {edition.location && (
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
-                {edition.location}
+              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full">
+                <MapPin className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium">{edition.location}</span>
               </div>
             )}
             {edition.start_date && edition.end_date && (
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                {new Date(edition.start_date).toLocaleDateString('pt-BR')} - {' '}
-                {new Date(edition.end_date).toLocaleDateString('pt-BR')}
+              <div className="flex items-center gap-2 bg-blue-50 px-3 py-1.5 rounded-full">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium">
+                  {new Date(edition.start_date).toLocaleDateString('pt-BR')} - {' '}
+                  {new Date(edition.end_date).toLocaleDateString('pt-BR')}
+                </span>
               </div>
             )}
           </div>
         </div>
 
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-4">Artigos Publicados</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800">Artigos Publicados</h2>
           
           {articles.length === 0 ? (
             <Card>
@@ -206,19 +208,19 @@ export default function EditionPage() {
           ) : (
             <div className="space-y-4">
               {articles.map((article) => (
-                <Card key={article.id} className="hover:shadow-md transition-shadow">
+                <Card key={article.id} className="hover:shadow-lg hover:border-blue-200 transition-all border-l-4 border-l-blue-500">
                   <CardHeader>
-                    <CardTitle className="text-xl">{article.title}</CardTitle>
+                    <CardTitle className="text-xl text-slate-800">{article.title}</CardTitle>
                     {article.authors && article.authors.length > 0 && (
                       <CardDescription className="flex items-center gap-2">
-                        <Users className="w-4 h-4" />
+                        <Users className="w-4 h-4 text-blue-600" />
                         <span>
                           {article.authors.map((author, index) => (
                             <span key={author.id}>
                               {index > 0 && ', '}
                               <Link 
                                 to={`/authors/${author.name.toLowerCase().replace(/\s+/g, '-')}`}
-                                className="text-blue-600 hover:underline"
+                                className="text-blue-600 hover:text-blue-800 hover:underline font-medium transition-colors"
                               >
                                 {author.name}
                               </Link>
@@ -230,13 +232,13 @@ export default function EditionPage() {
                   </CardHeader>
                   <CardContent>
                     {article.abstract && (
-                      <p className="text-muted-foreground mb-4 line-clamp-3">
+                      <p className="text-slate-600 mb-4 line-clamp-3">
                         {article.abstract}
                       </p>
                     )}
                     <div className="flex gap-2">
                       {article.pdf_url && (
-                        <Button variant="outline" size="sm" asChild>
+                        <Button variant="outline" size="sm" asChild className="border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300">
                           <a 
                             href={article.pdf_url} 
                             target="_blank" 

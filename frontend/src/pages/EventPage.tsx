@@ -135,9 +135,9 @@ export default function EventPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-slate-50">
       {/* Header */}
-      <header className="border-b border-border bg-background sticky top-0 z-50">
+      <header className="border-b border-border bg-white/80 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Button
@@ -158,15 +158,15 @@ export default function EventPage() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground mb-2">{event.name}</h1>
+        <div className="mb-8 pb-6 border-b border-blue-100">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">{event.name}</h1>
           {event.description && (
-            <p className="text-muted-foreground text-lg">{event.description}</p>
+            <p className="text-slate-600 text-lg">{event.description}</p>
           )}
         </div>
 
         <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-4">Edições do Evento</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-slate-800">Edições do Evento</h2>
           
           {editions.length === 0 ? (
             <Card>
@@ -180,10 +180,10 @@ export default function EventPage() {
           ) : (
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {editions.map((edition) => (
-                <Card key={edition.id} className="hover:shadow-md transition-shadow cursor-pointer">
+                <Card key={edition.id} className="hover:shadow-lg hover:border-blue-200 transition-all cursor-pointer border-l-4 border-l-blue-500">
                   <Link to={`/${getEditionSlug(edition)}`}>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
+                      <CardTitle className="flex items-center gap-2 text-blue-700">
                         <Calendar className="w-5 h-5" />
                         {edition.year}
                       </CardTitle>
@@ -201,7 +201,7 @@ export default function EventPage() {
                           {new Date(edition.end_date).toLocaleDateString('pt-BR')}
                         </p>
                       )}
-                      <p className="text-sm text-blue-600 mt-2">
+                      <p className="text-sm font-medium text-blue-600 mt-2 flex items-center gap-1">
                         Clique para ver os artigos →
                       </p>
                     </CardContent>
