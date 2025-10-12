@@ -3,23 +3,45 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, BookOpen, Database, Users, TrendingUp, Star, Zap, ChevronDown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import heroImage from "@/assets/hero-research.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [searchType, setSearchType] = useState("title");
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const query = formData.get('search') as string;
     if (query.trim()) {
-      navigate(`/search?q=${encodeURIComponent(query)}`);
+      navigate(`/search?q=${encodeURIComponent(query)}&type=${searchType}`);
+    }
+  };
+
+  const getPlaceholder = () => {
+    switch (searchType) {
+      case "title":
+        return "Search by paper title...";
+      case "author":
+        return "Search by author name...";
+      case "event":
+        return "Search by event name...";
+      default:
+        return "Search papers, authors, topics...";
     }
   };
 
@@ -35,9 +57,6 @@ const Index = () => {
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            {/* <a href="#about" className="text-muted-foreground hover:text-foreground transition-smooth">
-              About
-            </a> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
@@ -74,20 +93,35 @@ const Index = () => {
                 Find breakthrough research, organize your library, and accelerate discovery.
               </p>
               
-              {/* Search Bar */}
-              <form onSubmit={handleSearch} className="flex gap-2 mb-8">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                  <Input 
-                    name="search"
-                    placeholder="Search papers, authors, topics..." 
-                    className="pl-10 h-12 text-lg shadow-card border-accent"
-                  />
+              {/* Enhanced Search Bar */}
+              <form onSubmit={handleSearch} className="space-y-4 mb-8">
+                <div className="flex gap-2">
+                  <Select value={searchType} onValueChange={setSearchType}>
+                    <SelectTrigger className="w-40 h-12 shadow-card border-accent">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="title">Title</SelectItem>
+                      <SelectItem value="author">Author</SelectItem>
+                      <SelectItem value="event">Event</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                    <Input 
+                      name="search"
+                      placeholder={getPlaceholder()}
+                      className="pl-10 h-12 text-lg shadow-card border-accent"
+                    />
+                  </div>
+                  <Button type="submit" variant="hero" size="lg" className="h-12 px-8">
+                    <Search className="mr-2 h-5 w-5" />
+                    Search
+                  </Button>
                 </div>
-                <Button type="submit" variant="hero" size="lg" className="h-12 px-8">
-                  <Search className="mr-2 h-5 w-5" />
-                  Search
-                </Button>
+                <p className="text-sm text-muted-foreground">
+                  Search by {searchType === "title" ? "paper title" : searchType === "author" ? "author name" : "event name"} to find relevant research papers
+                </p>
               </form>
             </div>
             
