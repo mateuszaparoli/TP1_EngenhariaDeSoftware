@@ -237,16 +237,11 @@ export async function bulkImportArticles(payload: BulkImportPayload, bibtexFile?
     formData.append('year', payload.year.toString());
   }
   
+  // Add BibTeX content - either as file or as text content
   if (bibtexFile) {
     formData.append('bibtex_file', bibtexFile);
   } else if (payload.bibtex_content) {
-    // If no file but content is provided, send as JSON
-    const res = await fetch(`${API_URL}/api/articles/bulk-import/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    return handleRes(res);
+    formData.append('bibtex_content', payload.bibtex_content);
   }
 
   // Add PDF ZIP file if provided

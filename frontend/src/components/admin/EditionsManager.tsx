@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Trash2, ExternalLink, Plus } from "lucide-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 import { getEvents, getEditions, deleteEdition, EventItem, EditionItem } from "@/lib/api";
 import { toast } from "sonner";
 import EditionModal from "./EditionModal";
@@ -106,12 +106,9 @@ export default function EditionsManager(): React.JSX.Element {
                     <TableCell className="font-medium">
                       <Link 
                         to={getEditionSlug(edition)}
-                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
                       >
                         {edition.event?.name} - {edition.year}
-                        <ExternalLink className="w-3 h-3" />
                       </Link>
                     </TableCell>
                     <TableCell>{edition.year}</TableCell>

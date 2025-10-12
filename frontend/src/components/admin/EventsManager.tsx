@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getEvents, deleteEvent, EventItem } from "../../lib/api";
-import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import EventModal from "./EventModal";
 
@@ -107,12 +107,9 @@ export default function EventsManager(): React.JSX.Element {
                     <TableCell className="font-medium">
                       <Link 
                         to={`/${getEventSlug(ev)}`}
-                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-2"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
                       >
                         {ev.name}
-                        <ExternalLink className="w-3 h-3" />
                       </Link>
                     </TableCell>
                     <TableCell>{ev.description}</TableCell>

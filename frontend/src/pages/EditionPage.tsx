@@ -13,6 +13,7 @@ export default function EditionPage() {
   const [edition, setEdition] = useState<EditionItem | null>(null);
   const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const isAdmin = localStorage.getItem("userRole") === "admin";
 
   useEffect(() => {
     loadEditionData();
@@ -79,7 +80,7 @@ export default function EditionPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(isAdmin ? '/admin' : '/')}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -113,7 +114,7 @@ export default function EditionPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(isAdmin ? '/admin' : '/')}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -135,7 +136,7 @@ export default function EditionPage() {
               <p className="text-muted-foreground mb-4">
                 A edição solicitada não pôde ser encontrada.
               </p>
-              <Button onClick={() => navigate('/')}>
+              <Button onClick={() => navigate(isAdmin ? '/admin' : '/')}>
                 Voltar ao Início
               </Button>
             </CardContent>

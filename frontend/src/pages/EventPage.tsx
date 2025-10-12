@@ -12,6 +12,7 @@ export default function EventPage() {
   const [event, setEvent] = useState<EventItem | null>(null);
   const [editions, setEditions] = useState<EditionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const isAdmin = localStorage.getItem("userRole") === "admin";
 
   useEffect(() => {
     loadEventData();
@@ -68,7 +69,7 @@ export default function EventPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(isAdmin ? '/admin' : '/')}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -102,7 +103,7 @@ export default function EventPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate('/')}
+                onClick={() => navigate(isAdmin ? '/admin' : '/')}
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
@@ -124,7 +125,7 @@ export default function EventPage() {
               <p className="text-muted-foreground mb-4">
                 O evento solicitado não pôde ser encontrado.
               </p>
-              <Button onClick={() => navigate('/')}>
+              <Button onClick={() => navigate(isAdmin ? '/admin' : '/')}>
                 Voltar ao Início
               </Button>
             </CardContent>
@@ -143,7 +144,7 @@ export default function EventPage() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/')}
+              onClick={() => navigate(isAdmin ? '/admin' : '/')}
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
