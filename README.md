@@ -9,10 +9,70 @@
 | :------------------------------ | :---------------------- | 
 | Bruno Buti Ferreira Guilherme   | Desenvolvedor Backend   |  
 | João Vitor Vieira Neves         | Desenvolvedor FullStack |  
-| Mateus Faria Zaparoli Monteiro  | Desenvolvedor Frontend  |
+| Mateus Faria Zaparoli Monteiro  | Desenvolvedor FullStack |
 | Ricardo Shen                    | Desenvolvedor FullStack |
   
 ---  
+
+## Backlog da Sprint
+
+## **História #1:** Como administrador, eu quero cadastrar (editar, deletar) um evento. (Exemplo: Simpósio Brasileiro de Engenharia de Software)
+
+### **Tarefas e responsáveis:**
+
+- Instalar banco de dados e criar tabela para eventos [___Bruno_____]
+- Criar modelo de dados (entidade) para Evento [____Bruno_____]
+- Implementar endpoints no backend para CRUD de eventos [_____Mateus______]
+- Implementar tela de listagem de eventos [_____Ricardo______]
+- Implementar formulário de cadastro/edição de eventos [____João_______]
+- Implementar funcionalidade de exclusão de eventos [____Ricardo_______]
+- Conectar frontend com backend (integração) [____Mateus_______]
+
+---
+
+## **História #2:** Como administrador, eu quero cadastrar (editar, deletar) uma nova edição de um evento (exemplo: edição de 2025 do SBES)
+
+### **Tarefas e responsáveis:**
+
+- Criar tabela para edições de eventos com relacionamento [____Bruno_______]
+- Criar modelo de dados (entidade) para Edição [_____Bruno______]
+- Implementar endpoints no backend para CRUD de edições de eventos [____Mateus_______]
+- Implementar tela de listagem de edições de eventos [____Ricardo_______]
+- Implementar formulário de cadastro/edição de edições de eventos [____Ricardo_______]
+- Implementar funcionalidade de exclusão de edições de eventos [_____João______]
+- Conectar frontend com backend (integração) [_____João____]
+
+---
+
+## **História #3:** Como administrador, eu quero cadastrar (editar, deletar) um artigo manualmente, incluindo seu pdf
+
+### **Tarefas e responsáveis:**
+
+- Criar tabela de artigos no banco de dados [____Bruno_______]
+- Configurar armazenamento de arquivos (upload de PDF) [_____João______]
+- Criar modelo de dados para Artigo [______Bruno_____]
+- Implementar endpoints no backend para CRUD de artigos [____Mateus_______]
+- Implementar endpoint para upload de PDF [____Bruno_______]
+- Implementar tela de listagem de artigos [_____Ricardo______]
+- Implementar formulário de cadastro/edição de artigos com upload de PDF [_____João______]
+- Implementar funcionalidade de exclusão de artigos [______Ricardo_____]
+- Conectar frontend com backend (integração) [_____Mateus_____]
+
+---
+
+## **História #4:** Como administrador, eu quero cadastrar artigos em massa, a partir de um arquivo bibtex, com dados de vários artigos
+
+### **Tarefas e responsáveis:**
+
+- Pesquisar e escolher biblioteca para parsing de arquivos BibTeX [_____Bruno______]
+- Implementar parser de arquivo BibTeX no backend [______Bruno_____]
+- Criar endpoint para upload e processamento de arquivo BibTeX [____Mateus_______]
+- Implementar lógica de validação e tratamento de erros no processamento [_____Mateus______]
+- Implementar lógica de inserção em massa de artigos no banco de dados [______João_____]
+- Implementar tela de upload de arquivo BibTeX [_____João______]
+- Implementar feedback visual do processamento (progresso, erros, sucessos) [____Ricardo_______]
+- Conectar frontend com backend (integração) [_____Mateus_____]
+- Testar importação com diferentes arquivos BibTeX [___Ricardo________]
 
 ## Sobre o Sistema
 
