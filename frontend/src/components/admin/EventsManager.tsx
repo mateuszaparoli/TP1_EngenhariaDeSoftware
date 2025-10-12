@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Link } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -20,25 +9,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getEvents, createEvent, updateEvent, deleteEvent, EventItem } from "../../lib/api";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { getEvents, deleteEvent, EventItem } from "../../lib/api";
+import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+import EventModal from "./EventModal";
 
 export default function EventsManager(): React.JSX.Element {
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const [editing, setEditing] = useState<EventItem | null>(null);
-  const [form, setForm] = useState<EventItem>({ name: "", description: "" });
+  // Modal states
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<EventItem | null>(null);
 
   async function load() {
     setLoading(true);
-    setError(null);
     try {
       const data = await getEvents();
       setEvents(data);
     } catch (e: any) {
-      setError(e.message || "Erro");
+      toast.error(e.message || "Erro ao carregar eventos");
     } finally {
       setLoading(false);
     }
@@ -48,30 +38,19 @@ export default function EventsManager(): React.JSX.Element {
     load();
   }, []);
 
-  function startCreate() {
-    setEditing(null);
-    setForm({ name: "", description: "" });
+  function openCreateModal() {
+    setEditingEvent(null);
+    setModalOpen(true);
   }
 
-  function startEdit(ev: EventItem) {
-    setEditing(ev);
-    setForm({ ...ev });
+  function openEditModal(event: EventItem) {
+    setEditingEvent(event);
+    setModalOpen(true);
   }
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    try {
-      if (editing && editing.id) {
-        await updateEvent(editing.id, form);
-      } else {
-        await createEvent(form);
-      }
-      await load();
-      startCreate();
-    } catch (err: any) {
-      setError(err.message || "Erro ao salvar");
-    }
+  function closeModal() {
+    setModalOpen(false);
+    setEditingEvent(null);
   }
 
   async function onDelete(id?: number) {
@@ -80,58 +59,32 @@ export default function EventsManager(): React.JSX.Element {
     try {
       await deleteEvent(id);
       await load();
+      toast.success("Evento deletado com sucesso!");
     } catch (err: any) {
-      setError(err.message || "Erro ao deletar");
+      toast.error(err.message || "Erro ao deletar");
     }
   }
 
+  function getEventSlug(event: EventItem) {
+    return event.name.toLowerCase().replace(/\s+/g, '-');
+  }
+
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Eventos</h2>
           <p className="text-muted-foreground">Gerencie os eventos cadastrados</p>
         </div>
-        <Button onClick={startCreate}>
+        <Button onClick={openCreateModal}>
           <Plus className="w-4 h-4 mr-2" />
           Novo Evento
         </Button>
       </div>
 
-      <div className="mb-6">
-        <form onSubmit={onSubmit} className="space-y-2">
-          <div>
-            <Label htmlFor="name">Nome do Evento</Label>
-            <Input
-              id="name"
-              required
-              placeholder="Ex: Simpósio Brasileiro de Engenharia de Software"
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label htmlFor="description">Descrição</Label>
-            <Textarea
-              id="description"
-              placeholder="Descrição do evento..."
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-          </div>
-          <div>
-            <Button type="submit" className="btn">
-              {editing ? "Salvar" : "Criar"}
-            </Button>
-          </div>
-          {error && <div className="text-red-600 mt-2">{error}</div>}
-        </form>
-      </div>
-
       <div>
-        <h3 className="font-semibold mb-2">Lista de Eventos</h3>
         {loading ? (
-          <div>Carregando...</div>
+          <div className="text-center py-8">Carregando...</div>
         ) : (
           <Table>
             <TableHeader>
@@ -142,24 +95,59 @@ export default function EventsManager(): React.JSX.Element {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {events.map((ev) => (
-                <TableRow key={ev.id}>
-                  <TableCell>{ev.name}</TableCell>
-                  <TableCell>{ev.description}</TableCell>
-                  <TableCell className="text-right">
-                    <Button onClick={() => startEdit(ev)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button onClick={() => onDelete(ev.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+              {events.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center text-muted-foreground py-8">
+                    Nenhum evento cadastrado
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                events.map((ev) => (
+                  <TableRow key={ev.id}>
+                    <TableCell className="font-medium">
+                      <Link 
+                        to={`/${getEventSlug(ev)}`}
+                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-2"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {ev.name}
+                        <ExternalLink className="w-3 h-3" />
+                      </Link>
+                    </TableCell>
+                    <TableCell>{ev.description}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditModal(ev)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onDelete(ev.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         )}
       </div>
+
+      <EventModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        onSuccess={load}
+        event={editingEvent}
+      />
     </div>
   );
 }

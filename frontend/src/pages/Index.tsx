@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Search, BookOpen, Database, Users, TrendingUp, Star, Zap, ChevronDown } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, BookOpen, Database, Users, TrendingUp, Star, Zap, ChevronDown, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +18,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getEvents, EventItem } from "@/lib/api";
 import heroImage from "@/assets/hero-research.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
   const [searchType, setSearchType] = useState("title");
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
+
+  useEffect(() => {
+    loadEvents();
+  }, []);
+
+  async function loadEvents() {
+    setLoadingEvents(true);
+    try {
+      const eventsData = await getEvents();
+      setEvents(eventsData);
+    } catch (err) {
+      console.error("Erro ao carregar eventos:", err);
+    } finally {
+      setLoadingEvents(false);
+    }
+  }
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,6 +64,10 @@ const Index = () => {
         return "Search papers, authors, topics...";
     }
   };
+
+  function getEventSlug(event: EventItem) {
+    return event.name.toLowerCase().replace(/\s+/g, '-');
+  }
 
   return (
     <div className="min-h-screen bg-gradient-science">
@@ -134,6 +158,53 @@ const Index = () => {
               />
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Events Section */}
+      <section className="py-16 bg-background/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">Browse Events</h2>
+            <p className="text-muted-foreground text-lg">
+              Explore scientific events and their published papers
+            </p>
+          </div>
+          
+          {loadingEvents ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">Loading events...</p>
+            </div>
+          ) : events.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground">No events available yet.</p>
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {events.map((event) => (
+                <Card key={event.id} className="hover:shadow-lg transition-shadow cursor-pointer group">
+                  <Link to={`/${getEventSlug(event)}`}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2 group-hover:text-primary transition-colors">
+                        <Calendar className="w-5 h-5" />
+                        {event.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {event.description && (
+                        <p className="text-muted-foreground mb-4 line-clamp-3">
+                          {event.description}
+                        </p>
+                      )}
+                      <p className="text-sm text-blue-600 group-hover:text-blue-800 transition-colors">
+                        View editions and papers →
+                      </p>
+                    </CardContent>
+                  </Link>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -5,9 +5,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, Plus } from "lucide-react";
 import { toast } from "sonner";
 import EventsManager from "@/components/admin/EventsManager";
+import EditionsManager from "@/components/admin/EditionsManager";
 import PapersManager from "@/components/admin/PapersManager";
 import BulkImportManager from "@/components/admin/BulkImportManager";
-import AuthorsManager from "@/components/admin/AuthorsManager";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -53,22 +53,22 @@ const AdminDashboard = () => {
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="events" className="space-y-6">
           <TabsList className="grid w-full max-w-2xl grid-cols-4">
-            <TabsTrigger value="events">Events & Editions</TabsTrigger>
-            <TabsTrigger value="papers">Papers</TabsTrigger>
-            <TabsTrigger value="authors">Authors</TabsTrigger>
-            <TabsTrigger value="bulk-import">Bulk Import</TabsTrigger>
+            <TabsTrigger value="events">Eventos</TabsTrigger>
+            <TabsTrigger value="editions">Edições</TabsTrigger>
+            <TabsTrigger value="papers">Artigos</TabsTrigger>
+            <TabsTrigger value="bulk-import">Importação</TabsTrigger>
           </TabsList>
 
           <TabsContent value="events" className="space-y-4">
             <EventsManager />
           </TabsContent>
 
-          <TabsContent value="papers" className="space-y-4">
-            <PapersManager />
+          <TabsContent value="editions" className="space-y-4">
+            <EditionsManager />
           </TabsContent>
 
-          <TabsContent value="authors" className="space-y-4">
-            <AuthorsManager />
+          <TabsContent value="papers" className="space-y-4">
+            <PapersManager />
           </TabsContent>
 
           <TabsContent value="bulk-import" className="space-y-4">
