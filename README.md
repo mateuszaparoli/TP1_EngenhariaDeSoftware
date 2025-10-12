@@ -20,13 +20,13 @@
 
 ### **Tarefas e responsáveis:**
 
-- Instalar banco de dados e criar tabela para eventos [___Bruno_____]
-- Criar modelo de dados (entidade) para Evento [____Bruno_____]
-- Implementar endpoints no backend para CRUD de eventos [_____Mateus______]
-- Implementar tela de listagem de eventos [_____Ricardo______]
-- Implementar formulário de cadastro/edição de eventos [____João_______]
-- Implementar funcionalidade de exclusão de eventos [____Ricardo_______]
-- Conectar frontend com backend (integração) [____Mateus_______]
+- Instalar banco de dados e criar tabela para eventos [Bruno]
+- Criar modelo de dados (entidade) para Evento [Bruno]
+- Implementar endpoints no backend para CRUD de eventos [Mateus]
+- Implementar tela de listagem de eventos [Ricardo]
+- Implementar formulário de cadastro/edição de eventos [João]
+- Implementar funcionalidade de exclusão de eventos [Ricardo]
+- Conectar frontend com backend (integração) [Mateus]
 
 ---
 
@@ -34,13 +34,13 @@
 
 ### **Tarefas e responsáveis:**
 
-- Criar tabela para edições de eventos com relacionamento [____Bruno_______]
-- Criar modelo de dados (entidade) para Edição [_____Bruno______]
-- Implementar endpoints no backend para CRUD de edições de eventos [____Mateus_______]
-- Implementar tela de listagem de edições de eventos [____Ricardo_______]
-- Implementar formulário de cadastro/edição de edições de eventos [____Ricardo_______]
-- Implementar funcionalidade de exclusão de edições de eventos [_____João______]
-- Conectar frontend com backend (integração) [_____João____]
+- Criar tabela para edições de eventos com relacionamento [Bruno]
+- Criar modelo de dados (entidade) para Edição [Bruno]
+- Implementar endpoints no backend para CRUD de edições de eventos [Mateus]
+- Implementar tela de listagem de edições de eventos [Ricardo]
+- Implementar formulário de cadastro/edição de edições de eventos [Ricardo]
+- Implementar funcionalidade de exclusão de edições de eventos [João]
+- Conectar frontend com backend (integração) [João]
 
 ---
 
@@ -48,15 +48,15 @@
 
 ### **Tarefas e responsáveis:**
 
-- Criar tabela de artigos no banco de dados [____Bruno_______]
-- Configurar armazenamento de arquivos (upload de PDF) [_____João______]
-- Criar modelo de dados para Artigo [______Bruno_____]
-- Implementar endpoints no backend para CRUD de artigos [____Mateus_______]
-- Implementar endpoint para upload de PDF [____Bruno_______]
-- Implementar tela de listagem de artigos [_____Ricardo______]
-- Implementar formulário de cadastro/edição de artigos com upload de PDF [_____João______]
-- Implementar funcionalidade de exclusão de artigos [______Ricardo_____]
-- Conectar frontend com backend (integração) [_____Mateus_____]
+- Criar tabela de artigos no banco de dados [Bruno]
+- Configurar armazenamento de arquivos (upload de PDF) [João]
+- Criar modelo de dados para Artigo [Bruno]
+- Implementar endpoints no backend para CRUD de artigos [Mateus]
+- Implementar endpoint para upload de PDF [Bruno]
+- Implementar tela de listagem de artigos [Ricardo]
+- Implementar formulário de cadastro/edição de artigos com upload de PDF [João]
+- Implementar funcionalidade de exclusão de artigos [Ricardo]
+- Conectar frontend com backend (integração) [Mateus]
 
 ---
 
@@ -64,15 +64,15 @@
 
 ### **Tarefas e responsáveis:**
 
-- Pesquisar e escolher biblioteca para parsing de arquivos BibTeX [_____Bruno______]
-- Implementar parser de arquivo BibTeX no backend [______Bruno_____]
-- Criar endpoint para upload e processamento de arquivo BibTeX [____Mateus_______]
-- Implementar lógica de validação e tratamento de erros no processamento [_____Mateus______]
-- Implementar lógica de inserção em massa de artigos no banco de dados [______João_____]
-- Implementar tela de upload de arquivo BibTeX [_____João______]
-- Implementar feedback visual do processamento (progresso, erros, sucessos) [____Ricardo_______]
-- Conectar frontend com backend (integração) [_____Mateus_____]
-- Testar importação com diferentes arquivos BibTeX [___Ricardo________]
+- Pesquisar e escolher biblioteca para parsing de arquivos BibTeX [Bruno]
+- Implementar parser de arquivo BibTeX no backend [Bruno]
+- Criar endpoint para upload e processamento de arquivo BibTeX [Mateus]
+- Implementar lógica de validação e tratamento de erros no processamento [Mateus]
+- Implementar lógica de inserção em massa de artigos no banco de dados [João]
+- Implementar tela de upload de arquivo BibTeX [João]
+- Implementar feedback visual do processamento (progresso, erros, sucessos) [Ricardo]
+- Conectar frontend com backend (integração) [Mateus]
+- Testar importação com diferentes arquivos BibTeX [Ricardo]
 
 ## Sobre o Sistema
 
