@@ -92,16 +92,6 @@ const Index = () => {
                   Search
                 </Button>
               </form>
-
-              <div className="flex gap-4">
-                <Button variant="research" size="lg">
-                  <Database className="mr-2 h-5 w-5" />
-                  Browse Library
-                </Button>
-                <Button variant="outline" size="lg">
-                  Learn More
-                </Button>
-              </div>
             </div>
             
             <div className="relative">
@@ -112,118 +102,6 @@ const Index = () => {
                 className="relative rounded-3xl shadow-research w-full h-auto"
               />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Statistics */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">2.5M+</div>
-              <div className="text-muted-foreground">Research Papers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">150K+</div>
-              <div className="text-muted-foreground">Active Researchers</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</div>
-              <div className="text-muted-foreground">Research Fields</div>
-            </div>
-            <div className="text-center">
-              <div className="text-3xl md:text-4xl font-bold text-primary mb-2">99.9%</div>
-              <div className="text-muted-foreground">Uptime</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-20 bg-gradient-science">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Powerful Research Tools
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Everything you need to discover, organize, and analyze scientific literature
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <Search className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Advanced Search</h3>
-                <p className="text-muted-foreground">
-                  AI-powered search across millions of papers with semantic understanding and contextual relevance.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <Database className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Smart Storage</h3>
-                <p className="text-muted-foreground">
-                  Organize your research library with intelligent tagging, collections, and cross-references.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Analytics</h3>
-                <p className="text-muted-foreground">
-                  Track research trends, citation networks, and discover emerging topics in your field.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <Users className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Collaboration</h3>
-                <p className="text-muted-foreground">
-                  Share collections, annotate papers, and collaborate with researchers worldwide.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <Star className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Recommendations</h3>
-                <p className="text-muted-foreground">
-                  Get personalized paper recommendations based on your research interests and history.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-card hover:shadow-research transition-smooth border-accent/50">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-gradient-feature rounded-lg flex items-center justify-center mb-4">
-                  <Zap className="h-6 w-6 text-accent-foreground" />
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Fast Access</h3>
-                <p className="text-muted-foreground">
-                  Lightning-fast search results and paper access with advanced caching and CDN delivery.
-                </p>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>
