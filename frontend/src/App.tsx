@@ -8,7 +8,6 @@ import SearchPage from "./pages/SearchPage";
 import AuthorPage from "./pages/AuthorPage";
 import EventPage from "./pages/EventPage";
 import EditionPage from "./pages/EditionPage";
-import SignIn from "./pages/SignIn";
 import AdminSignIn from "./pages/AdminSignIn";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
@@ -25,7 +24,6 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/authors/:authorName" element={<AuthorPage />} />
-          <Route path="/signin" element={<SignIn />} />
           <Route path="/admin/signin" element={<AdminSignIn />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/:eventName" element={<EventPage />} />

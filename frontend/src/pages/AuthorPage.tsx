@@ -56,7 +56,7 @@ export default function AuthorPage() {
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                Voltar ao Início
               </Button>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 text-primary" />
@@ -69,7 +69,7 @@ export default function AuthorPage() {
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-muted-foreground">Loading author information...</p>
+            <p className="mt-4 text-muted-foreground">Carregando informações do autor...</p>
           </div>
         </div>
       </div>
@@ -89,7 +89,7 @@ export default function AuthorPage() {
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                Voltar ao Início
               </Button>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 text-primary" />
@@ -103,12 +103,12 @@ export default function AuthorPage() {
           <Card>
             <CardContent className="text-center py-12">
               <User className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Author not found</h3>
+              <h3 className="text-lg font-semibold mb-2">Autor não encontrado</h3>
               <p className="text-muted-foreground mb-4">
-                The author "{authorName?.replace('-', ' ')}" could not be found.
+                O autor "{authorName?.replace('-', ' ')}" não pôde ser encontrado.
               </p>
               <Button onClick={() => navigate('/')}>
-                Return to Home
+                Voltar ao Início
               </Button>
             </CardContent>
           </Card>
@@ -130,7 +130,7 @@ export default function AuthorPage() {
               className="flex items-center gap-2"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Home
+              Voltar ao Início
             </Button>
             <div className="flex items-center space-x-2">
               <BookOpen className="h-6 w-6 text-primary" />
@@ -152,12 +152,12 @@ export default function AuthorPage() {
                     {authorData.author.name}
                   </CardTitle>
                   <CardDescription className="text-lg">
-                    Research Publications
+                    Publicações de Pesquisa
                   </CardDescription>
                 </div>
                 <div className="text-right">
                   <Badge variant="secondary" className="text-sm">
-                    {authorData.total_articles} article{authorData.total_articles !== 1 ? 's' : ''}
+                    {authorData.total_articles} artigo{authorData.total_articles !== 1 ? 's' : ''}
                   </Badge>
                 </div>
               </div>
@@ -178,18 +178,18 @@ export default function AuthorPage() {
           <Card>
             <CardContent className="text-center py-12">
               <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No publications found</h3>
+              <h3 className="text-lg font-semibold mb-2">Nenhuma publicação encontrada</h3>
               <p className="text-muted-foreground">
-                This author doesn't have any published articles yet.
+                Este autor ainda não possui artigos publicados.
               </p>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold">Publications</h2>
+              <h2 className="text-2xl font-bold">Publicações</h2>
               <p className="text-muted-foreground">
-                Organized by year, most recent first
+                Organizadas por ano, mais recentes primeiro
               </p>
             </div>
 
@@ -199,7 +199,7 @@ export default function AuthorPage() {
                   <Calendar className="h-5 w-5 text-primary" />
                   <h3 className="text-xl font-semibold">{year}</h3>
                   <Badge variant="outline">
-                    {authorData.articles_by_year[year].length} article{authorData.articles_by_year[year].length !== 1 ? 's' : ''}
+                    {authorData.articles_by_year[year].length} artigo{authorData.articles_by_year[year].length !== 1 ? 's' : ''}
                   </Badge>
                 </div>
                 
@@ -233,7 +233,7 @@ export default function AuthorPage() {
                               <div className="flex items-center gap-2 mb-2">
                                 <User className="h-4 w-4 text-muted-foreground" />
                                 <span className="text-sm text-muted-foreground">
-                                  Co-authors: 
+                                  Coautores: 
                                 </span>
                                 <div className="flex flex-wrap gap-1">
                                   {article.authors
@@ -277,14 +277,14 @@ export default function AuthorPage() {
                                 className="flex items-center gap-2"
                               >
                                 <FileText className="h-4 w-4" />
-                                View PDF
+                                Ver PDF
                                 <ExternalLink className="h-3 w-3" />
                               </Button>
                             )}
                             
                             {article.created_at && (
                               <span className="text-xs text-muted-foreground">
-                                Added {new Date(article.created_at).toLocaleDateString()}
+                                Adicionado em {new Date(article.created_at).toLocaleDateString('pt-BR')}
                               </span>
                             )}
                           </div>

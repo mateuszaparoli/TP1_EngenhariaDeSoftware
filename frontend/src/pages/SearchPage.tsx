@@ -82,13 +82,13 @@ export default function SearchPage() {
   const getPlaceholder = () => {
     switch (searchType) {
       case "title":
-        return "Search by paper title...";
+        return "Buscar por título do artigo...";
       case "author":
-        return "Search by author name...";
+        return "Buscar por nome do autor...";
       case "event":
-        return "Search by event name...";
+        return "Buscar por nome do evento...";
       default:
-        return "Search papers...";
+        return "Buscar artigos...";
     }
   };
 
@@ -114,7 +114,7 @@ export default function SearchPage() {
                 className="flex items-center gap-2"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Home
+                Voltar ao Início
               </Button>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 text-primary" />
@@ -131,10 +131,10 @@ export default function SearchPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
-              Search Research Papers
+              Buscar Artigos de Pesquisa
             </CardTitle>
             <CardDescription>
-              Find papers by title, author, or event name
+              Encontre artigos por título, autor ou nome do evento
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -145,9 +145,9 @@ export default function SearchPage() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="title">Title</SelectItem>
-                    <SelectItem value="author">Author</SelectItem>
-                    <SelectItem value="event">Event</SelectItem>
+                    <SelectItem value="title">Título</SelectItem>
+                    <SelectItem value="author">Autor</SelectItem>
+                    <SelectItem value="event">Evento</SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="relative flex-1">
@@ -160,7 +160,7 @@ export default function SearchPage() {
                   />
                 </div>
                 <Button type="submit" disabled={loading}>
-                  {loading ? 'Searching...' : 'Search'}
+                  {loading ? 'Buscando...' : 'Buscar'}
                 </Button>
               </div>
             </form>
@@ -170,12 +170,12 @@ export default function SearchPage() {
         {/* Results */}
         {currentQuery && (
           <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-2">Search Results</h2>
+            <h2 className="text-2xl font-bold mb-2">Resultados da Busca</h2>
             <p className="text-muted-foreground">
               {loading ? (
-                'Searching...'
+                'Buscando...'
               ) : (
-                `${articles.length} result(s) found for "${currentQuery}" in ${getSearchTypeLabel()}`
+                `${articles.length} resultado(s) encontrado(s) para "${currentQuery}" em ${getSearchTypeLabel()}`
               )}
             </p>
           </div>
@@ -186,7 +186,7 @@ export default function SearchPage() {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Searching for papers...</p>
+              <p className="mt-4 text-muted-foreground">Buscando artigos...</p>
             </div>
           ) : articles.length > 0 ? (
             articles.map((article) => (
@@ -256,14 +256,14 @@ export default function SearchPage() {
                           className="flex items-center gap-2"
                         >
                           <FileText className="h-4 w-4" />
-                          View PDF
+                          Ver PDF
                           <ExternalLink className="h-3 w-3" />
                         </Button>
                       )}
                       
                       {article.created_at && (
                         <span className="text-xs text-muted-foreground">
-                          Added {new Date(article.created_at).toLocaleDateString()}
+                          Adicionado em {new Date(article.created_at).toLocaleDateString('pt-BR')}
                         </span>
                       )}
                     </div>
@@ -275,12 +275,12 @@ export default function SearchPage() {
             <Card>
               <CardContent className="text-center py-12">
                 <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No papers found</h3>
+                <h3 className="text-lg font-semibold mb-2">Nenhum artigo encontrado</h3>
                 <p className="text-muted-foreground mb-4">
-                  No papers match your search for "{currentQuery}" in {getSearchTypeLabel()}.
+                  Nenhum artigo corresponde à sua busca por "{currentQuery}" em {getSearchTypeLabel()}.
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Try adjusting your search terms or search in a different field.
+                  Tente ajustar seus termos de busca ou pesquisar em um campo diferente.
                 </p>
               </CardContent>
             </Card>
@@ -288,9 +288,9 @@ export default function SearchPage() {
             <Card>
               <CardContent className="text-center py-12">
                 <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Start your search</h3>
+                <h3 className="text-lg font-semibold mb-2">Inicie sua busca</h3>
                 <p className="text-muted-foreground">
-                  Enter a search term above to find research papers by title, author, or event.
+                  Digite um termo de busca acima para encontrar artigos de pesquisa por título, autor ou evento.
                 </p>
               </CardContent>
             </Card>

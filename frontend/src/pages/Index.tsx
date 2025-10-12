@@ -6,12 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -55,13 +49,13 @@ const Index = () => {
   const getPlaceholder = () => {
     switch (searchType) {
       case "title":
-        return "Search by paper title...";
+        return "Buscar por título do artigo...";
       case "author":
-        return "Search by author name...";
+        return "Buscar por nome do autor...";
       case "event":
-        return "Search by event name...";
+        return "Buscar por nome do evento...";
       default:
-        return "Search papers, authors, topics...";
+        return "Buscar artigos, autores, tópicos...";
     }
   };
 
@@ -81,22 +75,13 @@ const Index = () => {
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  Sign In
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => navigate('/signin')}>
-                  Sign in as User
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/admin/signin')}>
-                  Sign in as Admin
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/admin/signin')}
+            >
+              Registrar como Administrador
+            </Button>
           </nav>
         </div>
       </header>
@@ -108,13 +93,13 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="max-w-2xl">
               <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-                Discover, Store & 
-                <span className="bg-gradient-hero bg-clip-text text-transparent"> Research </span> 
-                Scientific Papers
+                Descubra, Armazene & 
+                <span className="bg-gradient-hero bg-clip-text text-transparent"> Pesquise </span> 
+                Artigos Científicos
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Advanced search and intelligent storage for scientific papers. 
-                Find breakthrough research, organize your library, and accelerate discovery.
+                Busca avançada e armazenamento inteligente para artigos científicos. 
+                Encontre pesquisas revolucionárias, organize sua biblioteca e acelere descobertas.
               </p>
               
               {/* Enhanced Search Bar */}
@@ -125,9 +110,9 @@ const Index = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="title">Title</SelectItem>
-                      <SelectItem value="author">Author</SelectItem>
-                      <SelectItem value="event">Event</SelectItem>
+                      <SelectItem value="title">Título</SelectItem>
+                      <SelectItem value="author">Autor</SelectItem>
+                      <SelectItem value="event">Evento</SelectItem>
                     </SelectContent>
                   </Select>
                   <div className="relative flex-1">
@@ -140,11 +125,11 @@ const Index = () => {
                   </div>
                   <Button type="submit" variant="hero" size="lg" className="h-12 px-8">
                     <Search className="mr-2 h-5 w-5" />
-                    Search
+                    Buscar
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Search by {searchType === "title" ? "paper title" : searchType === "author" ? "author name" : "event name"} to find relevant research papers
+                  Busque por {searchType === "title" ? "título do artigo" : searchType === "author" ? "nome do autor" : "nome do evento"} para encontrar artigos de pesquisa relevantes
                 </p>
               </form>
             </div>
@@ -153,7 +138,7 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-hero rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
               <img 
                 src={heroImage} 
-                alt="Scientific research visualization" 
+                alt="Visualização de pesquisa científica" 
                 className="relative rounded-3xl shadow-research w-full h-auto"
               />
             </div>
@@ -166,7 +151,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <p className="text-muted-foreground">
-              &copy; 2025 ResearchHub. All rights reserved.
+              &copy; 2025 CentroDeEstudos. Todos os direitos reservados.
             </p>
           </div>
         </div>

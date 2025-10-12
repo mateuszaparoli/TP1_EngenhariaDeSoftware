@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Calendar, MapPin, FileText } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, FileText, BookOpen } from "lucide-react";
 import { getEvents, getEditions, EventItem, EditionItem } from "@/lib/api";
 import { toast } from "sonner";
 
@@ -61,8 +61,32 @@ export default function EventPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border bg-background sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar ao Início
+              </Button>
+              <div className="flex items-center space-x-2">
+                <BookOpen className="h-6 w-6 text-primary" />
+                <span className="text-xl font-bold">ResearchHub</span>
+              </div>
+            </div>
+          </div>
+        </header>
+        
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">Carregando...</div>
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Carregando informações do evento...</p>
+          </div>
         </div>
       </div>
     );
@@ -71,8 +95,40 @@ export default function EventPage() {
   if (!event) {
     return (
       <div className="min-h-screen bg-background">
+        {/* Header */}
+        <header className="border-b border-border bg-background sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar ao Início
+              </Button>
+              <div className="flex items-center space-x-2">
+                <BookOpen className="h-6 w-6 text-primary" />
+                <span className="text-xl font-bold">ResearchHub</span>
+              </div>
+            </div>
+          </div>
+        </header>
+        
         <div className="container mx-auto px-4 py-8">
-          <div className="text-center">Evento não encontrado</div>
+          <Card>
+            <CardContent className="text-center py-12">
+              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Evento não encontrado</h3>
+              <p className="text-muted-foreground mb-4">
+                O evento solicitado não pôde ser encontrado.
+              </p>
+              <Button onClick={() => navigate('/')}>
+                Voltar ao Início
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -80,13 +136,29 @@ export default function EventPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border bg-background sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Voltar ao Início
+            </Button>
+            <div className="flex items-center space-x-2">
+              <BookOpen className="h-6 w-6 text-primary" />
+              <span className="text-xl font-bold">ResearchHub</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Voltar à página inicial
-          </Button>
-          
           <h1 className="text-3xl font-bold text-foreground mb-2">{event.name}</h1>
           {event.description && (
             <p className="text-muted-foreground text-lg">{event.description}</p>

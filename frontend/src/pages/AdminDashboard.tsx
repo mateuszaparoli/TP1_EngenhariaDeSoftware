@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     const email = localStorage.getItem("userEmail");
     
     if (role !== "admin") {
-      toast.error("Access denied. Admin privileges required.");
+      toast.error("Acesso negado. Privilégios de administrador necessários.");
       navigate("/admin/signin");
       return;
     }
@@ -31,7 +31,7 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userEmail");
-    toast.success("Logged out successfully");
+    toast.success("Logout realizado com sucesso");
     navigate("/admin/signin");
   };
 
@@ -40,12 +40,12 @@ const AdminDashboard = () => {
       <header className="border-b bg-card shadow-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Admin Dashboard</h1>
+            <h1 className="text-2xl font-bold text-foreground">Painel Administrativo</h1>
             <p className="text-sm text-muted-foreground">{userEmail}</p>
           </div>
           <Button variant="outline" onClick={handleLogout}>
             <LogOut className="w-4 h-4 mr-2" />
-            Logout
+            Sair
           </Button>
         </div>
       </header>

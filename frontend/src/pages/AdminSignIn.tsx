@@ -31,10 +31,10 @@ const AdminSignIn = () => {
       if (formData.email && formData.password) {
         localStorage.setItem("userRole", "admin");
         localStorage.setItem("userEmail", formData.email);
-        toast.success("Welcome, Administrator!");
+        toast.success("Bem-vindo, Administrador!");
         navigate("/admin/dashboard");
       } else {
-        toast.error("Please fill in all fields");
+        toast.error("Por favor, preencha todos os campos");
       }
       setIsLoading(false);
     }, 1000);
@@ -49,27 +49,27 @@ const AdminSignIn = () => {
               <Shield className="w-8 h-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Administrator Sign In</CardTitle>
+          <CardTitle className="text-2xl font-bold">Login do Administrador</CardTitle>
           <CardDescription>
-            Enter your credentials to access the admin dashboard
+            Insira suas credenciais para acessar o painel administrativo
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="admin@example.com"
+                placeholder="admin@exemplo.com"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input
                 id="password"
                 name="password"
@@ -87,15 +87,15 @@ const AdminSignIn = () => {
               className="w-full"
               disabled={isLoading}
             >
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? "Entrando..." : "Entrar"}
             </Button>
             <Button
               type="button"
               variant="ghost"
               className="w-full"
-              onClick={() => navigate("/signin")}
+              onClick={() => navigate("/")}
             >
-              Not an admin? Sign in as user
+              Voltar para a página inicial
             </Button>
           </CardFooter>
         </form>

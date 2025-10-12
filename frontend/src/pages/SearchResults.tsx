@@ -4,14 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Search, BookOpen, Calendar, Users, ExternalLink, Star, Filter, ChevronDown } from "lucide-react";
+import { Search, BookOpen, Calendar, Users, ExternalLink, Star, Filter } from "lucide-react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useState } from "react";
 
 // Mock data for search results
@@ -20,55 +14,55 @@ const mockResults = [
     id: 1,
     title: "Attention Is All You Need",
     authors: ["Ashish Vaswani", "Noam Shazeer", "Niki Parmar", "Jakob Uszkoreit"],
-    abstract: "The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism.",
+    abstract: "Os modelos dominantes de transdução de sequência são baseados em redes neurais recorrentes ou convolucionais complexas que incluem um codificador e um decodificador. Os modelos com melhor desempenho também conectam o codificador e o decodificador através de um mecanismo de atenção.",
     year: 2017,
     journal: "arXiv preprint",
     citations: 78532,
-    tags: ["Machine Learning", "Natural Language Processing", "Transformers"],
+    tags: ["Aprendizado de Máquina", "Processamento de Linguagem Natural", "Transformers"],
     arxivId: "1706.03762"
   },
   {
     id: 2,
     title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
     authors: ["Jacob Devlin", "Ming-Wei Chang", "Kenton Lee", "Kristina Toutanova"],
-    abstract: "We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models, BERT is designed to pre-train deep bidirectional representations.",
+    abstract: "Introduzimos um novo modelo de representação de linguagem chamado BERT, que significa Representações de Codificador Bidirecional de Transformers. Ao contrário de modelos recentes de representação de linguagem, o BERT é projetado para pré-treinar representações bidirecionais profundas.",
     year: 2018,
     journal: "arXiv preprint",
     citations: 65847,
-    tags: ["Machine Learning", "Natural Language Processing", "Deep Learning"],
+    tags: ["Aprendizado de Máquina", "Processamento de Linguagem Natural", "Aprendizado Profundo"],
     arxivId: "1810.04805"
   },
   {
     id: 3,
     title: "Language Models are Few-Shot Learners",
     authors: ["Tom B. Brown", "Benjamin Mann", "Nick Ryder", "Melanie Subbiah"],
-    abstract: "Recent work has demonstrated substantial gains on many NLP tasks and benchmarks by pre-training on a large corpus of text followed by fine-tuning on a specific task. While typically task-agnostic in architecture, this method still requires task-specific fine-tuning datasets.",
+    abstract: "Trabalhos recentes demonstraram ganhos substanciais em muitas tarefas e benchmarks de PLN através do pré-treinamento em um grande corpus de texto seguido de ajuste fino em uma tarefa específica. Embora tipicamente agnóstico à tarefa na arquitetura, este método ainda requer conjuntos de dados de ajuste fino específicos da tarefa.",
     year: 2020,
     journal: "arXiv preprint", 
     citations: 45231,
-    tags: ["Machine Learning", "Natural Language Processing", "GPT"],
+    tags: ["Aprendizado de Máquina", "Processamento de Linguagem Natural", "GPT"],
     arxivId: "2005.14165"
   },
   {
     id: 4,
     title: "Deep Residual Learning for Image Recognition",
     authors: ["Kaiming He", "Xiangyu Zhang", "Shaoqing Ren", "Jian Sun"],
-    abstract: "Deeper neural networks are more difficult to train. We present a residual learning framework to ease the training of networks that are substantially deeper than those used previously.",
+    abstract: "Redes neurais mais profundas são mais difíceis de treinar. Apresentamos uma estrutura de aprendizado residual para facilitar o treinamento de redes que são substancialmente mais profundas do que aquelas usadas anteriormente.",
     year: 2015,
     journal: "arXiv preprint",
     citations: 89342,
-    tags: ["Computer Vision", "Deep Learning", "ResNet"],
+    tags: ["Visão Computacional", "Aprendizado Profundo", "ResNet"],
     arxivId: "1512.03385"
   },
   {
     id: 5,
     title: "Generative Adversarial Networks",
     authors: ["Ian J. Goodfellow", "Jean Pouget-Abadie", "Mehdi Mirza", "Bing Xu"],
-    abstract: "We propose a new framework for estimating generative models via an adversarial process, in which we simultaneously train two models: a generative model G that captures the data distribution, and a discriminative model D that estimates the probability that a sample came from the training data rather than G.",
+    abstract: "Propomos uma nova estrutura para estimar modelos generativos através de um processo adversarial, no qual treinamos simultaneamente dois modelos: um modelo generativo G que captura a distribuição de dados, e um modelo discriminativo D que estima a probabilidade de que uma amostra veio dos dados de treinamento em vez de G.",
     year: 2014,
     journal: "arXiv preprint",
     citations: 67584,
-    tags: ["Machine Learning", "Generative Models", "GANs"],
+    tags: ["Aprendizado de Máquina", "Modelos Generativos", "GANs"],
     arxivId: "1406.2661"
   }
 ];
@@ -107,22 +101,13 @@ const SearchResults = () => {
             </button>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  Sign In
-                  <ChevronDown className="ml-2 h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => navigate('/signin')}>
-                  Sign in as User
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/admin/signin')}>
-                  Sign in as Admin
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/admin/signin')}
+            >
+              Registrar como Administrador
+            </Button>
           </nav>
         </div>
       </header>
@@ -136,12 +121,12 @@ const SearchResults = () => {
               <Input
                 name="search"
                 defaultValue={query}
-                placeholder="Search scientific papers..."
+                placeholder="Buscar artigos científicos..."
                 className="pl-10 h-12 bg-background/50 backdrop-blur-sm border-border/50"
               />
             </div>
             <Button type="submit" variant="hero" size="lg" className="h-12 px-8">
-              Search
+              Buscar
             </Button>
           </form>
         </div>
@@ -153,32 +138,32 @@ const SearchResults = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Filter className="h-5 w-5" />
-                  Filters
+                  Filtros
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Sort by</label>
+                  <label className="text-sm font-medium mb-2 block">Ordenar por</label>
                   <Select value={sortBy} onValueChange={setSortBy}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="relevance">Relevance</SelectItem>
-                      <SelectItem value="date">Date (newest)</SelectItem>
-                      <SelectItem value="citations">Citations</SelectItem>
+                      <SelectItem value="relevance">Relevância</SelectItem>
+                      <SelectItem value="date">Data (mais recente)</SelectItem>
+                      <SelectItem value="citations">Citações</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Year</label>
+                  <label className="text-sm font-medium mb-2 block">Ano</label>
                   <Select value={filterYear} onValueChange={setFilterYear}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">All years</SelectItem>
+                      <SelectItem value="all">Todos os anos</SelectItem>
                       <SelectItem value="2024">2024</SelectItem>
                       <SelectItem value="2023">2023</SelectItem>
                       <SelectItem value="2020-2023">2020-2023</SelectItem>
@@ -188,9 +173,9 @@ const SearchResults = () => {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Categories</label>
+                  <label className="text-sm font-medium mb-2 block">Categorias</label>
                   <div className="space-y-2">
-                    {["Machine Learning", "Computer Vision", "Natural Language Processing", "Deep Learning"].map((category) => (
+                    {["Aprendizado de Máquina", "Visão Computacional", "Processamento de Linguagem Natural", "Aprendizado Profundo"].map((category) => (
                       <label key={category} className="flex items-center space-x-2 text-sm">
                         <input type="checkbox" className="rounded border-border" />
                         <span>{category}</span>
@@ -207,7 +192,7 @@ const SearchResults = () => {
             {/* Results Header */}
             <div className="mb-6">
               <p className="text-muted-foreground">
-                About <span className="font-semibold text-foreground">{totalResults.toLocaleString()}</span> results for "<span className="font-semibold text-foreground">{query}</span>"
+                Cerca de <span className="font-semibold text-foreground">{totalResults.toLocaleString()}</span> resultados para "<span className="font-semibold text-foreground">{query}</span>"
               </p>
             </div>
 
@@ -229,13 +214,13 @@ const SearchResults = () => {
                       <span className="flex items-center gap-1">
                         <Users className="h-4 w-4" />
                         {paper.authors.slice(0, 3).join(", ")}
-                        {paper.authors.length > 3 && ` +${paper.authors.length - 3} more`}
+                        {paper.authors.length > 3 && ` +${paper.authors.length - 3} mais`}
                       </span>
                       <span className="flex items-center gap-1">
                         <Calendar className="h-4 w-4" />
                         {paper.year}
                       </span>
-                      <span>{paper.citations.toLocaleString()} citations</span>
+                      <span>{paper.citations.toLocaleString()} citações</span>
                     </div>
 
                     <p className="text-muted-foreground mb-4 leading-relaxed">
@@ -257,7 +242,7 @@ const SearchResults = () => {
                           arXiv
                         </Button>
                         <Button variant="research" size="sm">
-                          Save to Library
+                          Salvar na Biblioteca
                         </Button>
                       </div>
                     </div>
