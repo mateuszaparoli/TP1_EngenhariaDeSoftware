@@ -49,6 +49,8 @@ def _article_to_dict(a: Article):
         "edition": _edition_to_dict(a.edition) if a.edition_id else None,
         "authors": [_author_to_dict(x) for x in a.authors.all()],
         "bibtex": a.bibtex or None,
+        "pagina_inicial": a.pagina_inicial,
+        "pagina_final": a.pagina_final,
         "created_at": a.created_at.isoformat() if a.created_at else None,
     }
 
@@ -179,6 +181,8 @@ class ArticleListCreateAPIView(View):
                 pdf_url=request.POST.get("pdf_url", ""),
                 edition=edition,
                 bibtex=request.POST.get("bibtex", ""),
+                pagina_inicial=int(request.POST.get("pagina_inicial")) if request.POST.get("pagina_inicial") else None,
+                pagina_final=int(request.POST.get("pagina_final")) if request.POST.get("pagina_final") else None,
             )
 
             # Handle file upload
@@ -236,6 +240,8 @@ class ArticleListCreateAPIView(View):
             pdf_url=payload.get("pdf_url", ""),
             edition=edition,
             bibtex=payload.get("bibtex", ""),
+            pagina_inicial=payload.get("pagina_inicial"),
+            pagina_final=payload.get("pagina_final"),
         )
 
         # authors: accept list of names or comma/semicolon-separated string
@@ -315,6 +321,10 @@ class ArticleDetailView(View):
                 article.pdf_url = parsed_data.get("pdf_url", "")
             if "bibtex" in parsed_data:
                 article.bibtex = parsed_data.get("bibtex", "")
+            if "pagina_inicial" in parsed_data:
+                article.pagina_inicial = int(parsed_data.get("pagina_inicial")) if parsed_data.get("pagina_inicial") else None
+            if "pagina_final" in parsed_data:
+                article.pagina_final = int(parsed_data.get("pagina_final")) if parsed_data.get("pagina_final") else None
             
             # Handle edition
             if "edition_id" in parsed_data:
@@ -367,6 +377,10 @@ class ArticleDetailView(View):
             article.pdf_url = payload.get("pdf_url", "")
         if "bibtex" in payload:
             article.bibtex = payload.get("bibtex", "")
+        if "pagina_inicial" in payload:
+            article.pagina_inicial = payload.get("pagina_inicial")
+        if "pagina_final" in payload:
+            article.pagina_final = payload.get("pagina_final")
         
         if "edition_id" in payload:
             article.edition = get_object_or_404(Edition, pk=payload["edition_id"])

@@ -25,7 +25,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['id', 'title', 'abstract', 'pdf_url', 'edition', 'authors', 'bibtex', 'created_at']
+        fields = ['id', 'title', 'abstract', 'pdf_url', 'edition', 'authors', 'bibtex', 'pagina_inicial', 'pagina_final', 'created_at']
 
     def create(self, validated_data):
         authors_data = validated_data.pop('authors', [])
