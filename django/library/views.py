@@ -133,7 +133,18 @@ class ArticleListCreateAPIView(View):
         if title:
             qs = qs.filter(title__icontains=title)
         if author:
-            qs = qs.filter(authors__name__icontains=author)
+            # For author search, find names that contain the search term as a complete word
+            author_clean = author.strip()
+            # Use regex to match complete words (word boundaries)
+            from django.db.models import Q
+            import re
+            
+            # Escape special regex characters in the search term
+            escaped_term = re.escape(author_clean)
+            # Create regex pattern for word boundary matching (case insensitive)
+            regex_pattern = r'\b' + escaped_term + r'\b'
+            
+            qs = qs.filter(authors__name__iregex=regex_pattern)
         if event:
             qs = qs.filter(edition__event__name__icontains=event)
         qs = qs.distinct()
