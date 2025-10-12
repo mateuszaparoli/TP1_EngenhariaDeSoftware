@@ -35,9 +35,6 @@ const Index = () => {
             </span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-smooth">
-              Features
-            </a>
             {/* <a href="#about" className="text-muted-foreground hover:text-foreground transition-smooth">
               About
             </a> */}
@@ -73,7 +70,7 @@ const Index = () => {
                 Scientific Papers
               </h1>
               <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Advanced search and intelligent storage for millions of scientific papers. 
+                Advanced search and intelligent storage for scientific papers. 
                 Find breakthrough research, organize your library, and accelerate discovery.
               </p>
               
@@ -106,71 +103,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Section */}{/*
-      <section className="py-20 bg-background">
+      {/* Footer */}
+      <footer className="py-8 border-t border-border bg-background">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Ready to Accelerate Your Research?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of researchers who trust ResearchHub to find, organize, and analyze scientific literature.
+          <div className="text-center">
+            <p className="text-muted-foreground">
+              &copy; 2025 ResearchHub. All rights reserved.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="hero" size="lg" className="text-lg px-8 py-6">
-                Start Free Trial
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-6">
-                Schedule Demo
-              </Button>
-            </div>
           </div>
         </div>
-      </section>*/}
-
-      {/* Footer */}{/*
-      <footer className="bg-card border-t border-border py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <BookOpen className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">ResearchHub</span>
-              </div>
-              <p className="text-muted-foreground">
-                The future of scientific research discovery and organization.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-smooth">Features</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">Pricing</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">API</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-smooth">About</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">Careers</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground transition-smooth">Documentation</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">Help Center</a></li>
-                <li><a href="#" className="hover:text-foreground transition-smooth">Blog</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-border mt-8 pt-8 text-center text-muted-foreground">
-            <p>&copy; 2024 ResearchHub. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>*/}
+      </footer>
     </div>
   );
 };
