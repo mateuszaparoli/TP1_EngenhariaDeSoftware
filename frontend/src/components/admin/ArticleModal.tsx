@@ -30,10 +30,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
   const [form, setForm] = useState<ArticlePayload>({
     title: "",
     abstract: "",
-    pdf_url: "",
     edition_id: undefined,
     authors: [],
-    bibtex: "",
   });
   const [authorsInput, setAuthorsInput] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -52,10 +50,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       setForm({
         title: article.title,
         abstract: article.abstract || "",
-        pdf_url: article.pdf_url || "",
         edition_id: article.edition?.id,
         authors: authorNames,
-        bibtex: article.bibtex || "",
       });
       setAuthorsInput(authorNames.join(", "));
       setPdfFile(null);
@@ -67,10 +63,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       setForm({
         title: "",
         abstract: "",
-        pdf_url: "",
         edition_id: undefined,
         authors: [],
-        bibtex: "",
       });
       setAuthorsInput("");
       setPdfFile(null);
@@ -104,6 +98,16 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       return;
     }
 
+    if (!authorsInput.trim()) {
+      toast.error("Informe pelo menos um autor");
+      return;
+    }
+
+    if (!pdfFile) {
+      toast.error("Faça upload do arquivo PDF");
+      return;
+    }
+
     setLoading(true);
     
     try {
@@ -115,10 +119,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
       const payload: ArticlePayload = {
         title: form.title,
         abstract: form.abstract,
-        pdf_url: form.pdf_url,
         edition_id: form.edition_id,
         authors: authors,
-        bibtex: form.bibtex,
       };
 
       if (article && article.id) {
@@ -166,10 +168,9 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
             <div>
-              <Label htmlFor="title">Título *</Label>
+              <Label htmlFor="title">Título</Label>
               <Input
                 id="title"
-                required
                 placeholder="Título do artigo"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
@@ -178,7 +179,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
             </div>
 
             <div>
-              <Label htmlFor="event">Evento *</Label>
+              <Label htmlFor="event">Evento</Label>
               <Select
                 value={selectedEventId?.toString() || ""}
                 onValueChange={(value) => {
@@ -203,7 +204,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
             </div>
 
             <div>
-              <Label htmlFor="edition">Edição *</Label>
+              <Label htmlFor="edition">Edição</Label>
               <Select
                 value={form.edition_id?.toString() || ""}
                 onValueChange={(value) => setForm({ ...form, edition_id: value ? parseInt(value) : undefined })}
@@ -230,21 +231,24 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
             </div>
 
             <div>
-              <Label htmlFor="authors">Autores (separados por vírgula)</Label>
+              <Label htmlFor="authors">Autores</Label>
               <Input
                 id="authors"
-                placeholder="Ex: João Silva, Maria Santos"
+                placeholder="Ex: João Silva, Maria Santos (separados por vírgula)"
                 value={authorsInput}
                 onChange={(e) => setAuthorsInput(e.target.value)}
                 disabled={loading}
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Informe os nomes completos dos autores separados por vírgula
+              </p>
             </div>
 
             <div>
               <Label htmlFor="abstract">Resumo</Label>
               <Textarea
                 id="abstract"
-                placeholder="Resumo do artigo"
+                placeholder="Resumo do artigo (opcional)"
                 rows={3}
                 value={form.abstract}
                 onChange={(e) => setForm({ ...form, abstract: e.target.value })}
@@ -253,19 +257,7 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
             </div>
 
             <div>
-              <Label htmlFor="pdf_url">URL do PDF (opcional)</Label>
-              <Input
-                id="pdf_url"
-                type="url"
-                placeholder="https://exemplo.com/artigo.pdf"
-                value={form.pdf_url}
-                onChange={(e) => setForm({ ...form, pdf_url: e.target.value })}
-                disabled={loading}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="pdf_file">Upload de PDF (opcional)</Label>
+              <Label htmlFor="pdf_file">Upload de PDF</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="pdf_file"
@@ -283,20 +275,8 @@ export default function ArticleModal({ isOpen, onClose, onSuccess, article }: Ar
                 )}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Você pode fornecer uma URL ou fazer upload de um arquivo PDF
+                Faça upload do arquivo PDF do artigo
               </p>
-            </div>
-
-            <div>
-              <Label htmlFor="bibtex">BibTeX (opcional)</Label>
-              <Textarea
-                id="bibtex"
-                placeholder="@article{...}"
-                rows={3}
-                value={form.bibtex}
-                onChange={(e) => setForm({ ...form, bibtex: e.target.value })}
-                disabled={loading}
-              />
             </div>
           </div>
           <DialogFooter>

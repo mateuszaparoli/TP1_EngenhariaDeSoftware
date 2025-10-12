@@ -151,7 +151,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <p className="text-muted-foreground">
-              &copy; 2025 CentroDeEstudos. Todos os direitos reservados.
+              &copy; 2025 ResearchHub. Todos os direitos reservados.
             </p>
           </div>
         </div>

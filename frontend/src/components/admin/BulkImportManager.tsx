@@ -138,13 +138,13 @@ export default function BulkImportManager(): React.JSX.Element {
         <CardHeader>
           <CardTitle>Importar Artigos via BibTeX</CardTitle>
           <CardDescription>
-            Importe múltiplos artigos de uma só vez usando um arquivo BibTeX. Selecione uma edição existente.
+            Importe múltiplos artigos de uma só vez usando um arquivo BibTeX.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="event_select">Selecionar Evento *</Label>
+              <Label htmlFor="event_select">Selecionar Evento</Label>
               <Select
                 value={selectedEventId?.toString() || ""}
                 onValueChange={(value) => {
@@ -167,7 +167,7 @@ export default function BulkImportManager(): React.JSX.Element {
             </div>
 
             <div>
-              <Label htmlFor="edition_select">Edição *</Label>
+              <Label htmlFor="edition_select">Edição</Label>
               <Select
                 value={form.edition_id?.toString() || ""}
                 onValueChange={(value) => {
@@ -202,7 +202,7 @@ export default function BulkImportManager(): React.JSX.Element {
             </div>
 
             <div>
-              <Label>Conteúdo BibTeX *</Label>
+              <Label>Conteúdo BibTeX</Label>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="bibtex_file">Upload de arquivo .bib</Label>
@@ -226,7 +226,7 @@ export default function BulkImportManager(): React.JSX.Element {
                 <div className="text-center text-muted-foreground">OU</div>
 
                 <div>
-                  <Label htmlFor="bibtex_content">Cole o conteúdo BibTeX</Label>
+                  <Label htmlFor="bibtex_content">Cole o conteúdo BibTeX (opcional)</Label>
                   <Textarea
                     id="bibtex_content"
                     placeholder="@article{example2023,
@@ -252,7 +252,7 @@ export default function BulkImportManager(): React.JSX.Element {
             </div>
 
             <div>
-              <Label htmlFor="pdf_zip">Arquivo ZIP com PDFs (opcional)</Label>
+              <Label htmlFor="pdf_zip">Arquivo ZIP com PDFs</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="pdf_zip"

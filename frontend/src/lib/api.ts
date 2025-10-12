@@ -31,6 +31,8 @@ export type ArticleItem = {
   edition_id?: number;
   edition?: EditionItem;
   authors?: AuthorItem[];  // For displaying data from backend
+  start_page?: string;
+  end_page?: string;
   bibtex?: string;
   created_at?: string;
 };
@@ -38,7 +40,6 @@ export type ArticleItem = {
 export type ArticlePayload = {
   title: string;
   abstract?: string;
-  pdf_url?: string;
   edition_id?: number;
   authors?: string[];  // For sending data to backend (just names)
   bibtex?: string;
@@ -164,7 +165,6 @@ export async function createArticle(payload: ArticlePayload, pdfFile?: File): Pr
   const formData = new FormData();
   formData.append('title', payload.title);
   if (payload.abstract) formData.append('abstract', payload.abstract);
-  if (payload.pdf_url) formData.append('pdf_url', payload.pdf_url);
   if (payload.edition_id) formData.append('edition_id', payload.edition_id.toString());
   if (payload.bibtex) formData.append('bibtex', payload.bibtex);
   if (payload.authors && payload.authors.length > 0) {
@@ -186,7 +186,6 @@ export async function updateArticle(id: number, payload: Partial<ArticlePayload>
   const formData = new FormData();
   if (payload.title) formData.append('title', payload.title);
   if (payload.abstract !== undefined) formData.append('abstract', payload.abstract);
-  if (payload.pdf_url !== undefined) formData.append('pdf_url', payload.pdf_url);
   if (payload.edition_id) formData.append('edition_id', payload.edition_id.toString());
   if (payload.bibtex !== undefined) formData.append('bibtex', payload.bibtex);
   if (payload.authors && payload.authors.length > 0) {

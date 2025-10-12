@@ -77,7 +77,7 @@ export default function EventModal({ isOpen, onClose, onSuccess, event }: EventM
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
             <div>
-              <Label htmlFor="name">Nome do Evento *</Label>
+              <Label htmlFor="name">Nome do Evento</Label>
               <Input
                 id="name"
                 required

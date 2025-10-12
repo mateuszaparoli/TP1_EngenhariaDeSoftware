@@ -129,7 +129,7 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
         <form onSubmit={onSubmit}>
           <div className="grid gap-4 py-4">
             <div>
-              <Label htmlFor="event">Evento *</Label>
+              <Label htmlFor="event">Evento</Label>
               <Select
                 value={form.event_id?.toString() || ""}
                 onValueChange={(value) => setForm({ ...form, event_id: parseInt(value) })}
@@ -149,7 +149,7 @@ export default function EditionModal({ isOpen, onClose, onSuccess, edition }: Ed
             </div>
 
             <div>
-              <Label htmlFor="year">Ano *</Label>
+              <Label htmlFor="year">Ano</Label>
               <Input
                 id="year"
                 type="number"
