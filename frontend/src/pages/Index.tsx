@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search, BookOpen, Database, Users, TrendingUp, Star, Zap, ChevronDown, Calendar } from "lucide-react";
+import { Search, BookOpen, Database, Users, TrendingUp, Star, Zap, ChevronDown, Calendar, Bell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -74,7 +74,16 @@ const Index = () => {
               ResearchHub
             </span>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-4">
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => navigate('/notifications/signup')}
+              className="flex items-center space-x-2"
+            >
+              <Bell className="h-4 w-4" />
+              <span>Receber Notificações</span>
+            </Button>
             <Button 
               variant="outline" 
               size="sm"

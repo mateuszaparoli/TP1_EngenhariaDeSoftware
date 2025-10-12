@@ -10,6 +10,7 @@ import EventPage from "./pages/EventPage";
 import EditionPage from "./pages/EditionPage";
 import AdminSignIn from "./pages/AdminSignIn";
 import AdminDashboard from "./pages/AdminDashboard";
+import NotificationSignup from "./pages/NotificationSignup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/authors/:authorName" element={<AuthorPage />} />
           <Route path="/admin/signin" element={<AdminSignIn />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/notifications/signup" element={<NotificationSignup />} />
           <Route path="/:eventName" element={<EventPage />} />
           <Route path="/:eventName/:year" element={<EditionPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

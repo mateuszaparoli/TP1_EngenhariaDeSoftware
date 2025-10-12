@@ -421,19 +421,37 @@ class SubscriptionCreateView(View):
             payload = json.loads(request.body.decode() or "{}")
         except json.JSONDecodeError:
             return JsonResponse({"error": "invalid json"}, status=400)
+        
         email = payload.get('email')
+        name = payload.get('name')  # Nome do autor para criar subscription
+        
         if not email:
             return JsonResponse({"error": "email required"}, status=400)
-        author_id = payload.get('author')
-        event_id = payload.get('event')
-        author = None
-        event = None
-        if author_id:
-            author = get_object_or_404(Author, pk=author_id)
-        if event_id:
-            event = get_object_or_404(Event, pk=event_id)
-        sub = Subscription.objects.create(email=email, author=author, event=event)
-        return JsonResponse({"id": sub.id, "email": sub.email}, status=201)
+        if not name:
+            return JsonResponse({"error": "name required"}, status=400)
+        
+        # Buscar ou criar o autor baseado no nome
+        author, created = Author.objects.get_or_create(name=name.strip())
+        
+        # Verificar se já existe uma subscription para este email e autor
+        existing_subscription = Subscription.objects.filter(email=email, author=author).first()
+        if existing_subscription:
+            return JsonResponse({
+                "message": "Subscription already exists",
+                "id": existing_subscription.id,
+                "email": existing_subscription.email,
+                "author": author.name
+            }, status=200)
+        
+        # Criar nova subscription
+        sub = Subscription.objects.create(email=email, author=author)
+        
+        return JsonResponse({
+            "id": sub.id,
+            "email": sub.email,
+            "author": author.name,
+            "message": "Subscription created successfully"
+        }, status=201)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
