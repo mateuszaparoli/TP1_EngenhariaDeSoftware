@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Edit, Trash2, FileText, Plus } from "lucide-react";
 import { getArticles, deleteArticle, ArticleItem } from "@/lib/api";
 import { toast } from "sonner";
@@ -13,6 +14,10 @@ export default function PapersManager(): React.JSX.Element {
   // Modal states
   const [modalOpen, setModalOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<ArticleItem | null>(null);
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const articlesPerPage = 10;
 
   useEffect(() => {
     loadData();
@@ -56,12 +61,62 @@ export default function PapersManager(): React.JSX.Element {
     }
   }
 
+  // Pagination calculations
+  const totalPages = Math.ceil(articles.length / articlesPerPage);
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
+
+  // Reset to page 1 when articles change (e.g., after adding/deleting)
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [articles.length, currentPage, totalPages]);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    
+    if (totalPages <= maxPagesToShow) {
+      // Show all pages if total is less than max
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Smart pagination logic
+      const halfWay = Math.ceil(maxPagesToShow / 2);
+      
+      if (currentPage <= halfWay) {
+        // Near the beginning
+        for (let i = 1; i <= maxPagesToShow; i++) {
+          pages.push(i);
+        }
+      } else if (currentPage >= totalPages - halfWay + 1) {
+        // Near the end
+        for (let i = totalPages - maxPagesToShow + 1; i <= totalPages; i++) {
+          pages.push(i);
+        }
+      } else {
+        // In the middle
+        for (let i = currentPage - halfWay + 1; i <= currentPage + halfWay - 1; i++) {
+          pages.push(i);
+        }
+      }
+    }
+    
+    return pages;
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">Artigos</h2>
-          <p className="text-muted-foreground">Gerencie os artigos cadastrados</p>
+          <p className="text-muted-foreground">
+            Gerencie os artigos cadastrados ({articles.length} {articles.length === 1 ? 'artigo' : 'artigos'})
+          </p>
         </div>
         <Button onClick={openCreateModal}>
           <Plus className="w-4 h-4 mr-2" />
@@ -91,7 +146,7 @@ export default function PapersManager(): React.JSX.Element {
                   </TableCell>
                 </TableRow>
               ) : (
-                articles.map((article) => (
+                currentArticles.map((article) => (
                   <TableRow key={article.id}>
                     <TableCell className="font-medium">{article.title}</TableCell>
                     <TableCell>
@@ -144,6 +199,41 @@ export default function PapersManager(): React.JSX.Element {
           </Table>
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && articles.length > articlesPerPage && (
+        <div className="flex justify-center mt-6">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              
+              {getPageNumbers().map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(page)}
+                    isActive={currentPage === page}
+                    className="cursor-pointer"
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <ArticleModal
         isOpen={modalOpen}
