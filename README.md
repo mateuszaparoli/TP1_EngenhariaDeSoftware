@@ -86,7 +86,7 @@
 - Conectar a interface de pesquisa com o backend (integração) [Bruno]
 - Realizar testes na funcionalidade de busca [Mateus]
 
-## ** História #6: ** Como administrador, eu quero que todo evento tenha uma home page, com suas edições; cada edição, por sua vez, também deve ter uma home page, com seus artigos.
+## **História #6:** Como administrador, eu quero que todo evento tenha uma home page, com suas edições; cada edição, por sua vez, também deve ter uma home page, com seus artigos.
 
 ### Tarefas e responsáveis:
 
@@ -104,7 +104,7 @@
 - Conectar a página do autor com o endpoint do backend (integração) [Bruno]
 - Garantir que os nomes dos autores nos artigos sejam links para suas respectivas páginas [João]
 
-## ** História #7: ** Como usuário, eu quero ter uma home page com meus artigos, organizados por ano
+## **História #7:** Como usuário, eu quero ter uma home page com meus artigos, organizados por ano
 
 ### Tarefas e responsáveis:
 
@@ -115,7 +115,7 @@
 - Garantir que os nomes dos autores nos artigos sejam links para suas respectivas páginas [João]
 
 
-## ** História #8: ** Como usuário, eu quero me cadastrar para receber um mail sempre que eu tiver um novo artigo disponibilizado
+## **História #8:** Como usuário, eu quero me cadastrar para receber um mail sempre que eu tiver um novo artigo disponibilizado
 
 ### Tarefas e responsáveis:
 
@@ -125,7 +125,6 @@
 - Implementar a lógica de notificação por email quando um novo artigo for adicionado [Ricardo]
 - Implementar botão/formulário de subscrição na página do autor no frontend [João]
 - Conectar o formulário de subscrição com o backend (integração) [Ricardo]
-
 
 ## Sobre o Sistema
 
