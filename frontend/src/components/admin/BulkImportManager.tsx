@@ -19,7 +19,6 @@ export default function BulkImportManager(): React.JSX.Element {
 
   const [form, setForm] = useState({
     edition_id: undefined as number | undefined,
-    bibtex_content: "",
   });
   const [bibtexFile, setBibtexFile] = useState<File | null>(null);
   const [pdfZipFile, setPdfZipFile] = useState<File | null>(null);
@@ -52,22 +51,12 @@ export default function BulkImportManager(): React.JSX.Element {
   function handleBibtexFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
       setBibtexFile(e.target.files[0]);
-      // Clear text content when file is selected
-      setForm({ ...form, bibtex_content: "" });
     }
   }
 
   function handlePdfZipFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files[0]) {
       setPdfZipFile(e.target.files[0]);
-    }
-  }
-
-  function handleTextChange(value: string) {
-    setForm({ ...form, bibtex_content: value });
-    // Clear file when text is entered
-    if (value.trim()) {
-      setBibtexFile(null);
     }
   }
 
@@ -90,9 +79,9 @@ export default function BulkImportManager(): React.JSX.Element {
       return;
     }
 
-    if (!bibtexFile && !form.bibtex_content?.trim()) {
-      setError("Forneça um arquivo BibTeX ou cole o conteúdo");
-      toast.error("Forneça um arquivo BibTeX ou cole o conteúdo");
+    if (!bibtexFile) {
+      setError("Forneça um arquivo BibTeX");
+      toast.error("Forneça um arquivo BibTeX");
       return;
     }
 
@@ -101,10 +90,10 @@ export default function BulkImportManager(): React.JSX.Element {
       // Use existing edition - send edition_id instead of event_name + year
       const payload: BulkImportPayload = {
         edition_id: form.edition_id,
-        bibtex_content: form.bibtex_content,
+        bibtex_content: "",
       };
 
-      const result = await bulkImportArticles(payload, bibtexFile || undefined, pdfZipFile || undefined);
+      const result = await bulkImportArticles(payload, bibtexFile, pdfZipFile || undefined);
       setImportResult(result);
       
       if (result.success) {
@@ -114,7 +103,6 @@ export default function BulkImportManager(): React.JSX.Element {
         // Reset form
         setForm({
           edition_id: undefined,
-          bibtex_content: "",
         });
         setSelectedEventId(undefined);
         setBibtexFile(null);
@@ -202,51 +190,23 @@ export default function BulkImportManager(): React.JSX.Element {
             </div>
 
             <div>
-              <Label>Conteúdo BibTeX</Label>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="bibtex_file">Upload de arquivo .bib</Label>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      id="bibtex_file"
-                      type="file"
-                      accept=".bib,.txt"
-                      onChange={handleBibtexFileChange}
-                      className="flex-1"
-                    />
-                    {bibtexFile && (
-                      <span className="text-sm text-muted-foreground flex items-center gap-1">
-                        <FileText className="w-4 h-4" />
-                        {bibtexFile.name}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="text-center text-muted-foreground">OU</div>
-
-                <div>
-                  <Label htmlFor="bibtex_content">Cole o conteúdo BibTeX (opcional)</Label>
-                  <Textarea
-                    id="bibtex_content"
-                    placeholder="@article{example2023,
-  title={Título do Artigo},
-  author={João Silva and Maria Santos},
-  journal={Nome da Conferência},
-  year={2023},
-  abstract={Resumo do artigo...},
-  url={https://exemplo.com/artigo.pdf}
-}
-
-@article{outro2023,
-  title={Outro Artigo},
-  author={Pedro Oliveira},
-  ...
-}"
-                    rows={10}
-                    value={form.bibtex_content}
-                    onChange={(e) => handleTextChange(e.target.value)}
+              <Label>Arquivo BibTeX</Label>
+              <div>
+                <Label htmlFor="bibtex_file">Upload de arquivo .bib</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="bibtex_file"
+                    type="file"
+                    accept=".bib,.txt"
+                    onChange={handleBibtexFileChange}
+                    className="flex-1"
                   />
+                  {bibtexFile && (
+                    <span className="text-sm text-muted-foreground flex items-center gap-1">
+                      <FileText className="w-4 h-4" />
+                      {bibtexFile.name}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
