@@ -116,7 +116,7 @@ O sistema foi desenvolvido seguindo 8 user stories principais, conforme especifi
 * **UI Components:** shadcn/ui + Radix UI
 * **Styling:** Tailwind CSS
 * **Roteamento:** React Router DOM
-* **Gerenciamento de Estado:** TanStack Query (React Query)
+* **Gerenciamento de Estado:** React Query
 * **Plataforma de Desenvolvimento:** Lovable
 
 ### 🧠 Ferramenta de IA  
@@ -124,35 +124,13 @@ O sistema foi desenvolvido seguindo 8 user stories principais, conforme especifi
 * **Uso:** Assistência no desenvolvimento, geração de código e resolução de problemas
 
 ### 🛠️ Ferramentas de Desenvolvimento
-* **Bundler:** Bun (frontend)
+* **Bundler:** NPM (Frontend)
 * **Linting:** ESLint
 * **Tipagem:** TypeScript
 * **Formulários:** React Hook Form + Zod
 * **Ícones:** Lucide React
 
 ---
-
-## Estrutura do Projeto
-
-```
-TP1_EngenhariaDeSoftware/
-├── django/                    # Backend Django
-│   ├── backend/               # Configurações do projeto
-│   ├── library/               # App principal (models, views, APIs)
-│   ├── media/                 # Arquivos uploadados (PDFs)
-│   └── manage.py
-├── frontend/                  # Frontend React/TypeScript
-│   ├── src/
-│   │   ├── components/        # Componentes reutilizáveis
-│   │   ├── pages/            # Páginas da aplicação
-│   │   ├── hooks/            # Custom hooks
-│   │   └── lib/              # Utilitários
-│   ├── public/
-│   └── package.json
-├── scraper.py                 # Script para coleta de dados
-├── test_*.py                  # Testes automatizados
-└── README.md
-```
 
 ## Modelos de Dados
 
