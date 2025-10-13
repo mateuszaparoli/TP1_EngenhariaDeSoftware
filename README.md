@@ -172,3 +172,8 @@ O sistema implementa validações robustas, especialmente no upload de arquivos 
 ## APIs Disponíveis
 
 O backend expõe uma API REST completa para todas as operações CRUD dos modelos, permitindo integração completa com o frontend TypeScript.
+
+---
+
+## Diagrama UML
+https://github.com/mateuszaparoli/TP1_EngenhariaDeSoftware/blob/main/diagrama.md
