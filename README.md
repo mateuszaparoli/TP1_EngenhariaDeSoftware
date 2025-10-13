@@ -1,4 +1,5 @@
 # Trabalho Prático 1 - Engenharia de Software - 2025/2   
+
 **Professor**: Marco Tulio Valente  
 
 ---
@@ -98,16 +99,16 @@ O sistema foi desenvolvido seguindo 8 user stories principais, conforme especifi
 5. **Sistema de Busca** - Pesquisa por título, autor e evento
 6. **Navegação Hierárquica** - Páginas `/evento` e `/evento/ano`
 7. **Páginas de Autores** - Perfis individuais com artigos organizados por ano
-8. **Sistema de Notificações** - Alertas por email para novos artigos
+8. **Sistema de Notificações** - Cadastro em sistema de notificação para receber e-mails de autores selecionados
 
 ## Tecnologias e Ferramentas  
   
 ### 💻 Back-end  
-* **Linguagem:** Python 3.x
+* **Linguagem:** Python3 
 * **Framework:** Django + Django REST Framework
-* **Banco de Dados:** SQLite (desenvolvimento) / MySQL (produção)
+* **Banco de Dados:** SQLite 
 * **ORM:** Django ORM
-* **Upload de Arquivos:** Suporte para PDFs e arquivos BibTeX
+* **Upload de Arquivos:** Suporte para upload de arquivos em formato PDF e BibTeX
 
 ### 🌐 Front-end  
 * **Linguagem:** TypeScript
@@ -136,10 +137,10 @@ O sistema foi desenvolvido seguindo 8 user stories principais, conforme especifi
 
 O sistema utiliza os seguintes modelos principais:
 
-- **Event**: Eventos acadêmicos (nome, descrição)
-- **Edition**: Edições anuais dos eventos (ano, local, datas)
-- **Author**: Autores dos artigos (nome, email)  
-- **Article**: Artigos científicos (título, abstract, PDF, autores, edição)
+- **Event**: Eventos acadêmicos - Nome do evento, Sigla, Entidade Promotora
+- **Edition**: Edições anuais dos eventos - Evento, Ano, Local, Data de Início, Data de Término
+- **Author**: Autores dos artigos - Nome, E-mail
+- **Article**: Artigos científicos - Título, Resumo, Autores, Páginas, PDF
 
 ## Como Executar
 
@@ -153,11 +154,11 @@ python manage.py runserver
 ### Frontend (React/TypeScript)
 ```bash
 cd frontend
-bun install
-bun run dev
+npm install
+npm run dev
 ```
 
-O backend roda em `http://localhost:8000` e o frontend em `http://localhost:5173`.
+O backend roda em `http://localhost:8000` e o frontend em `http://localhost:8080`.
 
 ---
 
