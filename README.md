@@ -75,6 +75,58 @@
 - Conectar frontend com backend (integração) [Bruno]
 - Testar importação com diferentes arquivos BibTeX [Ricardo]
 
+## **História #5:** Como usuário, eu quero pesquisar por artigos: por título, por autor e por nome de evento
+
+### Tarefas e responsáveis:
+
+- Implementar endpoint no backend para pesquisar artigos com filtros [Mateus]
+- Criar componente de barra de pesquisa no frontend [João]
+- Implementar tela para exibição dos resultados da pesquisa [Ricardo]
+- Adicionar lógica de paginação aos resultados da pesquisa [Ricardo]
+- Conectar a interface de pesquisa com o backend (integração) [Bruno]
+- Realizar testes na funcionalidade de busca [Mateus]
+
+## ** História #6: ** Como administrador, eu quero que todo evento tenha uma home page, com suas edições; cada edição, por sua vez, também deve ter uma home page, com seus artigos.
+
+### Tarefas e responsáveis:
+
+- Implementar endpoint no backend para retornar dados de um evento e suas edições [Mateus]
+- Implementar endpoint no backend para retornar dados de uma edição e seus artigos [Mateus]
+- Criar rota e página dinâmica para a home page de um evento (ex: /sbes) [João]
+- Criar rota e página dinâmica para a home page de uma edição (ex: /sbes/2025) [João]
+- Implementar a interface da página de evento, listando suas edições [Ricardo]
+- Implementar a interface da página de edição, listando seus artigos [Ricardo]
+- Conectar as páginas do frontend com os endpoints do backend (integração) [Bruno]
+- História #7: Como usuário, eu quero ter uma home page com meus artigos, organizados por ano
+- Implementar endpoint no backend para retornar artigos de um autor, agrupados por ano [Mateus]
+- Criar rota e página dinâmica para a página do autor (ex: /author/nome-autor) [João]
+- Implementar a interface da página do autor, exibindo os artigos por ano [Ricardo]
+- Conectar a página do autor com o endpoint do backend (integração) [Bruno]
+- Garantir que os nomes dos autores nos artigos sejam links para suas respectivas páginas [João]
+
+## ** História #7: ** Como usuário, eu quero ter uma home page com meus artigos, organizados por ano
+
+### Tarefas e responsáveis:
+
+- Implementar endpoint no backend para retornar artigos de um autor, agrupados por ano [Mateus]
+- Criar rota e página dinâmica para a página do autor (ex: /author/nome-autor) [João]
+- Implementar a interface da página do autor, exibindo os artigos por ano [Ricardo]
+- Conectar a página do autor com o endpoint do backend (integração) [Bruno]
+- Garantir que os nomes dos autores nos artigos sejam links para suas respectivas páginas [João]
+
+
+## ** História #8: ** Como usuário, eu quero me cadastrar para receber um mail sempre que eu tiver um novo artigo disponibilizado
+
+### Tarefas e responsáveis:
+
+- Criar tabela no banco de dados para armazenar subscrições de email por autor [Bruno]
+- Implementar endpoint no backend para registrar a subscrição de um email a um autor [Mateus]
+- Integrar um serviço de envio de emails no backend [Ricardo]
+- Implementar a lógica de notificação por email quando um novo artigo for adicionado [Ricardo]
+- Implementar botão/formulário de subscrição na página do autor no frontend [João]
+- Conectar o formulário de subscrição com o backend (integração) [Ricardo]
+
+
 ## Sobre o Sistema
 
 Este projeto consiste em uma **biblioteca digital de artigos científicos** que permite gerenciar eventos acadêmicos, suas edições e artigos publicados. O sistema foi desenvolvido com foco em simpósios brasileiros como SBES (Simpósio Brasileiro de Engenharia de Software) e SBCARS (Simpósio Brasileiro de Arquitetura de Software).
