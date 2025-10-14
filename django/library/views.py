@@ -596,7 +596,7 @@ class BulkImportArticlesView(View):
                     bibtex_content = ''
                 
             if not bibtex_content:
-                return JsonResponse({"error": "No BibTeX content provided"}, status=400)
+                return JsonResponse({"error": "Nenhum conteúdo BibTeX fornecido"}, status=400)
             
             # Get edition info - now we expect edition_id from frontend
             edition_id = request.POST.get('edition_id')
@@ -612,7 +612,7 @@ class BulkImportArticlesView(View):
                 try:
                     edition = Edition.objects.get(pk=int(edition_id))
                 except Edition.DoesNotExist:
-                    return JsonResponse({"error": "Selected edition not found"}, status=400)
+                    return JsonResponse({"error": "Edição selecionada não encontrada"}, status=400)
             else:
                 # Fallback to old behavior for backward compatibility
                 event_name = request.POST.get('event_name')
@@ -627,16 +627,16 @@ class BulkImportArticlesView(View):
                         pass
                 
                 if not event_name or not year:
-                    return JsonResponse({"error": "edition_id or (event_name and year) are required"}, status=400)
+                    return JsonResponse({"error": "edition_id ou (event_name e year) são obrigatórios"}, status=400)
                 
                 # Get or create event and edition
                 event, _ = Event.objects.get_or_create(name=event_name)
                 try:
                     edition = Edition.objects.get(event=event, year=int(year))
                 except Edition.DoesNotExist:
-                    return JsonResponse({"error": f"No edition found for {event_name} {year}. Please create the edition first."}, status=400)
+                    return JsonResponse({"error": f"Nenhuma edição encontrada para {event_name} {year}. Por favor, crie a edição primeiro."}, status=400)
                 except Edition.MultipleObjectsReturned:
-                    return JsonResponse({"error": f"Multiple editions found for {event_name} {year}. Please specify edition_id."}, status=400)
+                    return JsonResponse({"error": f"Múltiplas edições encontradas para {event_name} {year}. Por favor, especifique edition_id."}, status=400)
             
             # Handle ZIP file with PDFs
             pdf_files = {}
@@ -663,6 +663,28 @@ class BulkImportArticlesView(View):
                     continue
                 
                 try:
+                    # Parse pages field (e.g., "1--11" or "1-11" or "100")
+                    pagina_inicial = None
+                    pagina_final = None
+                    pages_str = article_data.get('pages', '')
+                    if pages_str:
+                        # Try to split by -- or - or –
+                        pages_parts = re.split(r'[-–—]+', pages_str.strip())
+                        if len(pages_parts) >= 2:
+                            # Range format: "1--11" or "1-11"
+                            try:
+                                pagina_inicial = int(pages_parts[0].strip())
+                                pagina_final = int(pages_parts[1].strip())
+                            except ValueError:
+                                pass
+                        elif len(pages_parts) == 1 and pages_parts[0].strip():
+                            # Single page: "100"
+                            try:
+                                pagina_inicial = int(pages_parts[0].strip())
+                                pagina_final = pagina_inicial
+                            except ValueError:
+                                pass
+                    
                     # Create article
                     article = Article.objects.create(
                         title=article_data.get('title', ''),
@@ -670,6 +692,8 @@ class BulkImportArticlesView(View):
                         pdf_url=article_data.get('url', ''),
                         edition=edition,
                         bibtex=article_data.get('bibtex_entry', ''),
+                        pagina_inicial=pagina_inicial,
+                        pagina_final=pagina_final,
                     )
                     
                     # Try to match PDF file from ZIP
@@ -690,7 +714,7 @@ class BulkImportArticlesView(View):
                 except Exception as e:
                     processing_errors.append({
                         'title': article_data.get('title', f'Entry #{entry_index}'),
-                        'reason': f"Database error: {str(e)}"
+                        'reason': f"Erro no banco de dados: {str(e)}"
                     })
             
             # Generate summary report
@@ -709,10 +733,20 @@ class BulkImportArticlesView(View):
             }, status=201)
             
         except Exception as e:
-            return JsonResponse({"error": f"Import failed: {str(e)}"}, status=400)
+            return JsonResponse({"error": f"Falha na importação: {str(e)}"}, status=400)
     
     def _validate_article_data(self, article_data, entry_index):
         """Validate that article has all required fields"""
+        # Map field names to Portuguese
+        field_translation = {
+            'title': 'título',
+            'year': 'ano',
+            'authors': 'autores',
+            'title (too short)': 'título (muito curto)',
+            'year (invalid range)': 'ano (fora do intervalo válido)',
+            'year (invalid format)': 'ano (formato inválido)'
+        }
+        
         required_fields = ['title', 'year']  # Title and year are mandatory
         recommended_fields = ['authors']  # Authors are highly recommended
         
@@ -747,16 +781,19 @@ class BulkImportArticlesView(View):
         
         # Generate validation result
         if missing_required:
+            # Translate field names to Portuguese
+            translated_fields = [field_translation.get(field, field) for field in missing_required]
             return {
                 'valid': False,
-                'reason': f"Missing required fields: {', '.join(missing_required)}",
+                'reason': f"Campos obrigatórios em falta: {', '.join(translated_fields)}",
                 'missing_fields': missing_required + missing_recommended
             }
         
         # Warn about missing recommended fields but don't skip
         warnings = []
         if missing_recommended:
-            warnings.append(f"Missing recommended fields: {', '.join(missing_recommended)}")
+            translated_recommended = [field_translation.get(field, field) for field in missing_recommended]
+            warnings.append(f"Campos recomendados em falta: {', '.join(translated_recommended)}")
         
         return {
             'valid': True,
@@ -770,6 +807,9 @@ class BulkImportArticlesView(View):
         total_entries = len(created_articles) + len(skipped_articles) + len(processing_errors)
         success_rate = (len(created_articles) / total_entries * 100) if total_entries > 0 else 0
         
+        # Get actual PDF count from the special key
+        actual_pdf_count = pdf_files.get('__pdf_count__', 0)
+        
         report = {
             'summary': {
                 'total_entries_processed': total_entries,
@@ -777,7 +817,7 @@ class BulkImportArticlesView(View):
                 'skipped_entries': len(skipped_articles),
                 'processing_errors': len(processing_errors),
                 'success_rate': round(success_rate, 1),
-                'pdf_files_in_zip': len(pdf_files),
+                'pdf_files_in_zip': actual_pdf_count,
                 'pdfs_successfully_matched': len([a for a in created_articles if a.get('pdf_url') and 'localhost:8000' in str(a.get('pdf_url', ''))])
             },
             'details': {
@@ -804,6 +844,7 @@ class BulkImportArticlesView(View):
         from django.core.files.base import ContentFile
         
         pdf_files = {}
+        pdf_count = 0  # Track actual PDF file count
         
         try:
             with zipfile.ZipFile(zip_file, 'r') as zip_ref:
@@ -827,9 +868,13 @@ class BulkImportArticlesView(View):
                         name_without_ext = os.path.splitext(filename)[0].lower()
                         pdf_files[name_without_ext] = pdf_data
                         
+                        pdf_count += 1  # Increment actual file count
+                        
         except Exception as e:
             print(f"Error extracting ZIP: {e}")
-            
+        
+        # Store the actual count in a special key
+        pdf_files['__pdf_count__'] = pdf_count
         return pdf_files
     
     def _find_matching_pdf(self, article_data, pdf_files):

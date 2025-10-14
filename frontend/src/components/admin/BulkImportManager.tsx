@@ -346,13 +346,8 @@ export default function BulkImportManager(): React.JSX.Element {
                     <div key={index} className="text-sm bg-yellow-50 p-3 rounded border-l-4 border-yellow-400">
                       <div className="font-medium text-yellow-800">{skipped.title}</div>
                       <div className="text-yellow-700 mt-1">
-                        <strong>Motivo:</strong> {skipped.reason}
+                        {skipped.reason}
                       </div>
-                      {skipped.missing_fields && skipped.missing_fields.length > 0 && (
-                        <div className="text-yellow-600 mt-1 text-xs">
-                          Campos em falta: {skipped.missing_fields.join(", ")}
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>

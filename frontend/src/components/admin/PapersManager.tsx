@@ -126,6 +126,14 @@ export default function PapersManager(): React.JSX.Element {
     }
   }
 
+  function handlePageInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setPageInput(value);
+    
+    // Clear custom validity message when user types
+    e.target.setCustomValidity("");
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -266,9 +274,15 @@ export default function PapersManager(): React.JSX.Element {
               min="1"
               max={totalPages}
               value={pageInput}
-              onChange={(e) => setPageInput(e.target.value)}
+              onChange={handlePageInputChange}
+              onInvalid={(e) => {
+                e.preventDefault();
+                const target = e.target as HTMLInputElement;
+                target.setCustomValidity(`Por favor, insira um número entre 1 e ${totalPages}`);
+              }}
               placeholder={`1-${totalPages}`}
               className="w-20 h-8"
+              title={`Insira um número entre 1 e ${totalPages}`}
             />
             <Button type="submit" size="sm" variant="outline">
               Ir
