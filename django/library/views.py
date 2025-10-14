@@ -406,7 +406,6 @@ class ArticleDetailView(View):
         article.delete()
         return JsonResponse({}, status=204)
 
-
 @method_decorator(csrf_exempt, name='dispatch')
 class AuthorArticlesView(View):
     def get(self, request, pk):
@@ -459,7 +458,6 @@ class AuthorByNameView(View):
             "articles_by_year": grouped_by_year
         })
 
-
 @method_decorator(csrf_exempt, name='dispatch')
 class SubscriptionCreateView(View):
     def post(self, request):
@@ -498,7 +496,6 @@ class SubscriptionCreateView(View):
             "author": author.name,
             "message": "Subscription created successfully"
         }, status=201)
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class SubscriptionListView(View):
