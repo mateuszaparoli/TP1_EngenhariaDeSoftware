@@ -1,4 +1,16 @@
-const API_URL = 'http://localhost:8000';
+const DEFAULT_API_PORT = 8000;
+
+function getApiUrl() {
+  // When running in the browser, prefer the same hostname the app was served from
+  // so requests use the same origin (avoids CORS issues when using 127.0.0.1 vs localhost).
+  if (typeof window !== 'undefined' && window.location && window.location.hostname) {
+    return `http://${window.location.hostname}:${DEFAULT_API_PORT}`;
+  }
+  // Fallback for server-side or default environment
+  return `http://localhost:${DEFAULT_API_PORT}`;
+}
+
+const API_URL = getApiUrl();
 
 export type EventItem = {
   id?: number;

@@ -99,7 +99,7 @@ test.describe('Painel Administrativo', () => {
     await page.waitForTimeout(1000);
     
     // Verificar que foi redirecionado para home
-    expect(page.url()).toBe('http://172.31.152.200:8080/');
+    expect(page.url()).toBe('http://127.0.0.1:8080/');
     
     await page.screenshot({ path: 'test-results/admin-back-home.png', fullPage: true });
   });

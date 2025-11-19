@@ -20,7 +20,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* WSL: Use IP do WSL e porta correta 8080 */
-    baseURL: 'http://172.31.152.200:8080', // IP fixo do WSL + porta correta
+    baseURL: 'http://127.0.0.1:8080', // IP fixo do WSL + porta correta
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     headless: true, // Forçar headless para funcionar no WSL
